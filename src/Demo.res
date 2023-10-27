@@ -26,3 +26,8 @@ module Int = {
 let cc=Js.log(Int.add(1,2));
 // Js.log(Js.typeof(Int));
 Js.log(cc)
+
+let a= 1
+let a=a+1;
+Js.log("a = ");
+Js.log("a = " ++ Js.Int.toString(a))
