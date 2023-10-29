@@ -6,26 +6,19 @@ function _foo(){
     console.log(this.data)
 };
 
-let x={
-    data : "data from x",
-    foo : _foo
+class XX{
+    data="data from XX";
+    foo(a){
+    console.log(this.data+a) 
+    }
 }
+let xx = new XX()
 
-x.foo();
-
-// _foo();
-
-console.log("-------------")
-let foo3 = x.foo;
-foo3.bind(x)();
-let foo4 = foo3.bind(x);
-foo4();
-
-function combine(fun, v)
+function _1(f, v)
 {
-    console.log(foo3.bind)
-    return fun(v)
+    f(v)
 }
+let foo = _1( xx.foo.bind , xx);
 
-let foo5= combine(foo3.bind,x)
-foo5();
+_1(foo,"haha");
+// _foo();
