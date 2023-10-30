@@ -7,8 +7,7 @@ This is the branch where you can use your output code in NodeJS. To use your out
 ## bun build
 
 ```bash
-bun build src/example.js --outdir=out --outfile=exa
-mple.js  --target browser
+bun build src/example.js --outdir=out --outfile=example.js  --target browser
 ```
 
 ## Installation

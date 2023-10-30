@@ -10608,14 +10608,22 @@ Object.assign(ColorConvert, ColorConvert2);
 Object.assign(Export, Export2);
 useCanvas();
 
-// src/example.js
-var leafer = new Leafer({ view: "mydiv" });
-var rect3 = new Rect({
-  x: 100,
-  y: 100,
-  width: 20,
-  height: 20,
-  fill: "#32cd79",
+// src/leafer.bs.js
+var main = function(param) {
+  return "leafer-ui writting by rescript";
+};
+var leafer = new Leafer({
+  view: "mydiv"
+});
+var re = new Rect({
+  x: 10,
+  y: 10,
+  width: 100,
+  height: 100,
+  fill: "#32cd29",
   draggable: true
 });
-leafer.add(rect3);
+leafer.add(re);
+
+// src/index.js
+main();

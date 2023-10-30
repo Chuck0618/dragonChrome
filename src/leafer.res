@@ -3,9 +3,7 @@ type leaferConfig={
 }
 type rectHandle={}
  
-type leaferHandle={
-    add : (. rectHandle )=> unit
-}
+type leaferHandle={}
 
 
 type rectConfig={
@@ -20,24 +18,26 @@ type rectConfig={
 @new @module("leafer-ui") external leaferJS: leaferConfig => leaferHandle = "Leafer"
 @new @module("leafer-ui") external rect: rectConfig => rectHandle = "Rect"
 
- 
+@send external addRect: (leaferHandle, rectHandle) => unit = "add"
 
 
 
 // @get external add: (leaferHandle) => (rectHandle)=> unit="add"
-
-let lf= leaferJS({view: "mydiv"});
+let main=()=>{"leafer-ui writting by rescript"}
+let leafer= leaferJS({view: "mydiv"});
 
 let re = rect({
-    x: 100,
-    y: 100,
-    width: 200,
-    height: 200,
-    fill: "#32cd79",
+    x: 10,
+    y: 10,
+    width: 100,
+    height: 100,
+    fill: "#32cd29",
     draggable: true,
 })
 
-let lfadd = (re)=>{lf.add(. re )} 
-lfadd(re)
+// let lfadd = (re)=>{lf.add(. re )} 
+// lfadd(re)
+addRect(leafer, re);
+
 
 

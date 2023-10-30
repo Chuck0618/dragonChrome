@@ -2,28 +2,28 @@
 
 import * as LeaferUi from "leafer-ui";
 
-var lf = new LeaferUi.Leafer({
+var leafer = new LeaferUi.Leafer({
       view: "mydiv"
     });
 
 var re = new LeaferUi.Rect({
-      x: 100,
-      y: 100,
-      width: 200,
-      height: 200,
-      fill: "#32cd79",
+      x: 10,
+      y: 10,
+      width: 100,
+      height: 100,
+      fill: "#32cd29",
       draggable: true
     });
 
-function lfadd(re) {
-  lf.add(re);
-}
+leafer.add(re);
 
-lf.add(re);
+function main(param) {
+  return "leafer-ui writting by rescript";
+}
 
 export {
-  lf ,
+  leafer ,
   re ,
-  lfadd ,
+  main ,
 }
-/* lf Not a pure module */
+/* leafer Not a pure module */

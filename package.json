@@ -9,7 +9,7 @@
   "scripts": {
     "res:build": "rescript",
     "res:clean": "rescript clean",
-    "res:dev": "rescript build -w"
+    "res": "rescript build && bun build src/index.js --outdir=out --target browser"
   },
   "dependencies": {
     "@rescript/core": "*",
