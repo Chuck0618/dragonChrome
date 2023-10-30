@@ -1,4 +1,3 @@
-import * as index from "./leafer.bs.js";
- 
+import * as main from "./dragon.bs"
 
-index.main();
+console.log(main.name());
