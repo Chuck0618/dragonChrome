@@ -4,7 +4,7 @@ import * as LeaferUi from "leafer-ui";
 import * as Caml_int32 from "rescript/lib/es6/caml_int32.js";
 
 var leafer = new LeaferUi.Leafer({
-      view: "mydiv",
+      view: window,
       width: 600,
       height: 400
     });
@@ -46,7 +46,7 @@ var rectCurrent = new LeaferUi.Rect({
       y: 0,
       width: 39,
       height: 56,
-      fill: fillContainer[0],
+      fill: "b",
       draggable: true
     });
 
@@ -60,7 +60,7 @@ var flagTimeup = {
   contents: false
 };
 
-setTimeout((function (param) {
+setInterval((function (param) {
         flagTimeup.contents = true;
         console.log("time up!");
       }), 200);
@@ -78,7 +78,6 @@ function rectUpdate(param) {
 
 leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
         rectUpdate(undefined);
-        console.log("test");
       }));
 
 function name(param) {
@@ -86,3 +85,17 @@ function name(param) {
 }
 
 var rectTimeDuration = 200;
+
+export {
+  leafer ,
+  x_offset ,
+  fillContainer ,
+  fillx ,
+  rectCurrent ,
+  flag ,
+  flagTimeup ,
+  rectTimeDuration ,
+  rectUpdate ,
+  name ,
+}
+/* leafer Not a pure module */

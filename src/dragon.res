@@ -1,5 +1,5 @@
 type leaferConfig={
-    view: string,
+    view: Dom.window,
     width?: int,
     height?: int,
 }
@@ -37,7 +37,7 @@ event:eventHandle = "AnimateEvent";
 add : (leaferHandle, rectHandle ) => unit = "add"
 
 // main object
-let leafer = leaferJS({view: "mydiv",
+let leafer = leaferJS({view: window,
 width: 600,
 height: 400,
 })
@@ -48,7 +48,7 @@ let fillContainer:array<fillConfig>=[]
 let fillx=(x1:int) =>{
     let f:fillConfig={
     type_: "image",
-    url: "dragon.png",
+    url: "./src/dragon.png",
     mode: "clip",
     offset: { x: -x1, y: 2 },
     }
@@ -78,7 +78,7 @@ let flag = ref(0); // which config of fillContainer is using
 let flagTimeup = ref(false);
 
 let rectTimeDuration=200;
-let _= Js.Global.setTimeout(() => {flagTimeup.contents = true; Js.log("time up!")}, rectTimeDuration)
+let _= Js.Global.setInterval(() => {flagTimeup.contents = true; Js.log("time up!")}, rectTimeDuration)
 
 let rectUpdate = () => {
     if (flagTimeup.contents == true ){
@@ -92,8 +92,9 @@ let rectUpdate = () => {
 
  on_(leafer, event._frame , () => { 
     rectUpdate();
-    Js.log("test")
+    // Js.log("test")
     // rect.forceUpdate();
 })
 
 let name = ()=>{ "my name is dragon"}
+ 

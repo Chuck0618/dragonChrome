@@ -2,6 +2,10 @@
 
 import * as LeaferUi from "leafer-ui";
 
+function main(param) {
+  return "leafer-ui writting by rescript";
+}
+
 var leafer = new LeaferUi.Leafer({
       view: "mydiv"
     });
@@ -17,13 +21,9 @@ var re = new LeaferUi.Rect({
 
 leafer.add(re);
 
-function main(param) {
-  return "leafer-ui writting by rescript";
-}
-
 export {
+  main ,
   leafer ,
   re ,
-  main ,
 }
 /* leafer Not a pure module */
