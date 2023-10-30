@@ -1,79 +1,4 @@
-// node_modules/rescript/lib/es6/caml_array.js
-var sub = function(x, offset, len) {
-  var result = new Array(len);
-  var j = 0;
-  var i = offset;
-  while (j < len) {
-    result[j] = x[i];
-    j = j + 1 | 0;
-    i = i + 1 | 0;
-  }
-  return result;
-};
-
-// node_modules/rescript/lib/es6/curry.js
-var app = function(_f, _args) {
-  while (true) {
-    var args = _args;
-    var f = _f;
-    var init_arity = f.length;
-    var arity = init_arity === 0 ? 1 : init_arity;
-    var len = args.length;
-    var d = arity - len | 0;
-    if (d === 0) {
-      return f.apply(null, args);
-    }
-    if (d >= 0) {
-      return function(f2, args2) {
-        return function(x) {
-          return app(f2, args2.concat([x]));
-        };
-      }(f, args);
-    }
-    _args = sub(args, arity, -d | 0);
-    _f = f.apply(null, sub(args, 0, arity));
-    continue;
-  }
-};
-var _1 = function(o, a0) {
-  var arity = o.length;
-  if (arity === 1) {
-    return o(a0);
-  } else {
-    switch (arity) {
-      case 1:
-        return o(a0);
-      case 2:
-        return function(param) {
-          return o(a0, param);
-        };
-      case 3:
-        return function(param, param$1) {
-          return o(a0, param, param$1);
-        };
-      case 4:
-        return function(param, param$1, param$2) {
-          return o(a0, param, param$1, param$2);
-        };
-      case 5:
-        return function(param, param$1, param$2, param$3) {
-          return o(a0, param, param$1, param$2, param$3);
-        };
-      case 6:
-        return function(param, param$1, param$2, param$3, param$4) {
-          return o(a0, param, param$1, param$2, param$3, param$4);
-        };
-      case 7:
-        return function(param, param$1, param$2, param$3, param$4, param$5) {
-          return o(a0, param, param$1, param$2, param$3, param$4, param$5);
-        };
-      default:
-        return app(o, [a0]);
-    }
-  }
-};
-
-// node_modules/@leafer/core/dist/core.esm.js
+// /mnt/d/project/typescript/node_modules/@leafer/core/dist/core.esm.js
 var get = function() {
   return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
 };
@@ -611,13 +536,13 @@ var MatrixHelper = {
     t.d *= y;
   },
   scaleOfOuter(t, origin, x, y = x) {
-    M$6.toInnerPoint(t, origin, tempPoint$1);
-    M$6.scaleOfInner(t, tempPoint$1, x, y);
+    M$5.toInnerPoint(t, origin, tempPoint$1);
+    M$5.scaleOfInner(t, tempPoint$1, x, y);
   },
   scaleOfInner(t, origin, x, y = x) {
-    M$6.translateInner(t, origin.x, origin.y);
-    M$6.scale(t, x, y);
-    M$6.translateInner(t, -origin.x, -origin.y);
+    M$5.translateInner(t, origin.x, origin.y);
+    M$5.scale(t, x, y);
+    M$5.translateInner(t, -origin.x, -origin.y);
   },
   rotate(t, angle) {
     angle *= OneRadian;
@@ -630,13 +555,13 @@ var MatrixHelper = {
     t.d = c * sinR + d * cosR;
   },
   rotateOfOuter(t, origin, angle) {
-    M$6.toInnerPoint(t, origin, tempPoint$1);
-    M$6.rotateOfInner(t, tempPoint$1, angle);
+    M$5.toInnerPoint(t, origin, tempPoint$1);
+    M$5.rotateOfInner(t, tempPoint$1, angle);
   },
   rotateOfInner(t, origin, angle) {
-    M$6.translateInner(t, origin.x, origin.y);
-    M$6.rotate(t, angle);
-    M$6.translateInner(t, -origin.x, -origin.y);
+    M$5.translateInner(t, origin.x, origin.y);
+    M$5.rotate(t, angle);
+    M$5.translateInner(t, -origin.x, -origin.y);
   },
   skew(t, x, y) {
     const { a, b, c, d } = t;
@@ -652,13 +577,13 @@ var MatrixHelper = {
     }
   },
   skewOfOuter(t, origin, x, y) {
-    M$6.toInnerPoint(t, origin, tempPoint$1);
-    M$6.skewOfInner(t, tempPoint$1, x, y);
+    M$5.toInnerPoint(t, origin, tempPoint$1);
+    M$5.skewOfInner(t, tempPoint$1, x, y);
   },
   skewOfInner(t, origin, x, y) {
-    M$6.translateInner(t, origin.x, origin.y);
-    M$6.skew(t, x, y);
-    M$6.translateInner(t, -origin.x, -origin.y);
+    M$5.translateInner(t, origin.x, origin.y);
+    M$5.skew(t, x, y);
+    M$5.translateInner(t, -origin.x, -origin.y);
   },
   multiply(t, matrix) {
     const { a, b, c, d, e, f } = t;
@@ -681,12 +606,12 @@ var MatrixHelper = {
     t.f = e * matrix.b + f * matrix.d + matrix.f;
   },
   divide(t, matrix) {
-    M$6.preMultiply(t, M$6.tempInvert(matrix));
+    M$5.preMultiply(t, M$5.tempInvert(matrix));
   },
   tempInvert(t) {
-    const { tempMatrix: temp } = M$6;
-    M$6.copy(temp, t);
-    M$6.invert(temp);
+    const { tempMatrix: temp } = M$5;
+    M$5.copy(temp, t);
+    M$5.invert(temp);
     return temp;
   },
   invert(t) {
@@ -748,10 +673,10 @@ var MatrixHelper = {
     return { x: t.e, y: t.f, scaleX, scaleY, rotation, skewX, skewY };
   },
   reset(t) {
-    M$6.set(t);
+    M$5.set(t);
   }
 };
-var M$6 = MatrixHelper;
+var M$5 = MatrixHelper;
 var { toInnerPoint: toInnerPoint$2, toOuterPoint: toOuterPoint$2 } = MatrixHelper;
 var { sin: sin$3, cos: cos$3, abs: abs$1, sqrt: sqrt$2, atan2: atan2$2 } = Math;
 var PointHelper = {
@@ -1025,17 +950,13 @@ var BoundsHelper = {
     }
     B.move(to, -to.offsetX, -to.offsetY);
   },
-  scale(t, scaleX, scaleY = scaleX) {
+  scale(t, scaleX, scaleY) {
+    if (!scaleY)
+      scaleY = scaleX;
     if (t.x)
       t.x *= scaleX;
     if (t.y)
       t.y *= scaleY;
-    t.width *= scaleX;
-    t.height *= scaleY;
-  },
-  scaleOf(t, origin, scaleX, scaleY) {
-    t.x += (t.x - origin.x) * (scaleX - 1);
-    t.y += (t.y - origin.y) * (scaleY - 1);
     t.width *= scaleX;
     t.height *= scaleY;
   },
@@ -1224,10 +1145,6 @@ class Bounds {
   }
   scale(scaleX, scaleY) {
     BoundsHelper.scale(this, scaleX, scaleY);
-    return this;
-  }
-  scaleOf(origin, scaleX, scaleY) {
-    BoundsHelper.scaleOf(this, origin, scaleX, scaleY);
     return this;
   }
   toOuterOf(matrix, to) {
@@ -1767,21 +1684,14 @@ class LeafData {
     if (this.__input && this.__input[name] !== undefined)
       this.__input[name] = undefined;
   }
-  __getInputData(options) {
+  __getInputData() {
     const data = { tag: this.__leaf.tag }, { __input } = this;
-    if (options) {
-      for (let key in this) {
-        if (key[0] !== "_")
-          data[key] = this[key];
-      }
-    } else {
-      let realKey, value;
-      for (let key in this) {
-        realKey = key.substring(1);
-        if (this[realKey] !== undefined) {
-          value = __input ? __input[realKey] : undefined;
-          data[realKey] = value === undefined ? this[key] : value;
-        }
+    let realKey, value;
+    for (let key in this) {
+      realKey = key.substring(1);
+      if (this[realKey] !== undefined) {
+        value = __input ? __input[realKey] : undefined;
+        data[realKey] = value === undefined ? this[key] : value;
       }
     }
     return data;
@@ -2509,11 +2419,11 @@ var RectHelper = {
 var { sin: sin$2, cos: cos$2, atan2: atan2$1, ceil, abs, PI, sqrt: sqrt$1, pow } = Math;
 var { setPoint: setPoint$1, addPoint: addPoint$1 } = TwoPointBoundsHelper;
 var { set } = PointHelper;
-var { M: M$5, L: L$6, C: C$5, Q: Q$4, Z: Z$5 } = PathCommandMap;
+var { M: M$4, L: L$5, C: C$4, Q: Q$4, Z: Z$4 } = PathCommandMap;
 var tempPoint = {};
 var BezierHelper = {
   points(data, points, curve, close) {
-    data.push(M$5, points[0], points[1]);
+    data.push(M$4, points[0], points[1]);
     if (curve && points.length > 5) {
       let aX, aY, bX, bY, cX, cY, c1X, c1Y, c2X, c2Y;
       let ba, cb, d, len = points.length;
@@ -2542,7 +2452,7 @@ var BezierHelper = {
           if (!close)
             data.push(Q$4, c1X, c1Y, bX, bY);
         } else {
-          data.push(C$5, c2X, c2Y, c1X, c1Y, bX, bY);
+          data.push(C$4, c2X, c2Y, c1X, c1Y, bX, bY);
         }
         c2X = bX + cb * cX;
         c2Y = bY + cb * cY;
@@ -2551,11 +2461,11 @@ var BezierHelper = {
         data.push(Q$4, c2X, c2Y, points[len - 2], points[len - 1]);
     } else {
       for (let i = 2, len = points.length;i < len; i += 2) {
-        data.push(L$6, points[i], points[i + 1]);
+        data.push(L$5, points[i], points[i + 1]);
       }
     }
     if (close)
-      data.push(Z$5);
+      data.push(Z$4);
   },
   rect(data, x, y, width, height) {
     PathHelper.creator.path = data;
@@ -2578,7 +2488,7 @@ var BezierHelper = {
       totalRadian += PI2;
     if (totalRadian === PI || abs(BAx + BAy) < 0.000000000001 || abs(CBx + CBy) < 0.000000000001) {
       if (data)
-        data.push(L$6, x1, y1);
+        data.push(L$5, x1, y1);
       if (setPointBounds) {
         setPoint$1(setPointBounds, fromX, fromY);
         addPoint$1(setPointBounds, x1, y1);
@@ -2631,7 +2541,7 @@ var BezierHelper = {
     let startY = y = rotationSin * radiusX * startCos + rotationCos * radiusY * startSin;
     let fromX = cx + x, fromY = cy + y;
     if (data)
-      data.push(L$6, fromX, fromY);
+      data.push(L$5, fromX, fromY);
     if (setPointBounds)
       setPoint$1(setPointBounds, fromX, fromY);
     if (setStartPoint)
@@ -2646,7 +2556,7 @@ var BezierHelper = {
       x2 = cx + x + control * (rotationCos * radiusX * endSin + rotationSin * radiusY * endCos);
       y2 = cy + y + control * (rotationSin * radiusX * endSin - rotationCos * radiusY * endCos);
       if (data)
-        data.push(C$5, x1, y1, x2, y2, cx + x, cy + y);
+        data.push(C$4, x1, y1, x2, y2, cx + x, cy + y);
       if (setPointBounds)
         toTwoPointBounds$1(cx + startX, cy + startY, x1, y1, x2, y2, cx + x, cy + y, setPointBounds, true);
       startX = x;
@@ -2660,7 +2570,7 @@ var BezierHelper = {
       set(setEndPoint, cx + x, cy + y);
   },
   quadraticCurveTo(data, fromX, fromY, x1, y1, toX, toY) {
-    data.push(C$5, (fromX + 2 * x1) / 3, (fromY + 2 * y1) / 3, (toX + 2 * x1) / 3, (toY + 2 * y1) / 3, toX, toY);
+    data.push(C$4, (fromX + 2 * x1) / 3, (fromY + 2 * y1) / 3, (toX + 2 * x1) / 3, (toY + 2 * y1) / 3, toX, toY);
   },
   toTwoPointBoundsByQuadraticCurve(fromX, fromY, x1, y1, toX, toY, pointBounds, addMode) {
     toTwoPointBounds$1(fromX, fromY, (fromX + 2 * x1) / 3, (fromY + 2 * y1) / 3, (toX + 2 * x1) / 3, (toY + 2 * y1) / 3, toX, toY, pointBounds, addMode);
@@ -2751,7 +2661,7 @@ var EllipseHelper = {
     const centerX = fromX + halfX + rotationCos * cx - rotationSin * cy;
     const centerY = fromY + halfY + rotationSin * cx + rotationCos * cy;
     const anticlockwise = totalRadian < 0 ? 1 : 0;
-    if (curveMode || Platform.ellipseToCurve) {
+    if (curveMode || Platform.name === "node") {
       ellipse$4(data, centerX, centerY, radiusX, radiusY, rotation, startRadian / OneRadian, endRadian / OneRadian, anticlockwise);
     } else {
       if (radiusX === radiusY && !rotation) {
@@ -2762,7 +2672,7 @@ var EllipseHelper = {
     }
   }
 };
-var { M: M$4, m, L: L$5, l, H, h, V, v, C: C$4, c, S, s, Q: Q$3, q, T, t, A, a, Z: Z$4, z, N: N$3, D: D$3, X: X$3, G: G$3, F: F$3, O: O$3, P: P$3, U: U$4 } = PathCommandMap;
+var { M: M$3, m, L: L$4, l, H, h, V, v, C: C$3, c, S, s, Q: Q$3, q, T, t, A, a, Z: Z$3, z, N: N$3, D: D$3, X: X$3, G: G$3, F: F$3, O: O$3, P: P$3, U: U$3 } = PathCommandMap;
 var { rect: rect$1, roundRect: roundRect$2, arcTo: arcTo$2, arc: arc$3, ellipse: ellipse$3, quadraticCurveTo: quadraticCurveTo$1 } = BezierHelper;
 var { ellipticalArc } = EllipseHelper;
 var debug$5 = Debug.get("PathConvert");
@@ -2845,33 +2755,33 @@ var PathConvert = {
         case m:
           old[i + 1] += x;
           old[i + 2] += y;
-        case M$4:
+        case M$3:
           x = old[i + 1];
           y = old[i + 2];
-          data.push(M$4, x, y);
+          data.push(M$3, x, y);
           i += 3;
           break;
         case h:
           old[i + 1] += x;
         case H:
           x = old[i + 1];
-          data.push(L$5, x, y);
+          data.push(L$4, x, y);
           i += 2;
           break;
         case v:
           old[i + 1] += y;
         case V:
           y = old[i + 1];
-          data.push(L$5, x, y);
+          data.push(L$4, x, y);
           i += 2;
           break;
         case l:
           old[i + 1] += x;
           old[i + 2] += y;
-        case L$5:
+        case L$4:
           x = old[i + 1];
           y = old[i + 2];
-          data.push(L$5, x, y);
+          data.push(L$4, x, y);
           i += 3;
           break;
         case s:
@@ -2881,14 +2791,14 @@ var PathConvert = {
           old[i + 4] += y;
           command = S;
         case S:
-          smooth = lastCommand === C$4 || lastCommand === S;
+          smooth = lastCommand === C$3 || lastCommand === S;
           x1 = smooth ? x * 2 - controlX : old[i + 1];
           y1 = smooth ? y * 2 - controlY : old[i + 2];
           controlX = old[i + 1];
           controlY = old[i + 2];
           x = old[i + 3];
           y = old[i + 4];
-          data.push(C$4, x1, y1, controlX, controlY, x, y);
+          data.push(C$3, x1, y1, controlX, controlY, x, y);
           i += 5;
           break;
         case c:
@@ -2898,13 +2808,13 @@ var PathConvert = {
           old[i + 4] += y;
           old[i + 5] += x;
           old[i + 6] += y;
-          command = C$4;
-        case C$4:
+          command = C$3;
+        case C$3:
           controlX = old[i + 3];
           controlY = old[i + 4];
           x = old[i + 5];
           y = old[i + 6];
-          data.push(C$4, old[i + 1], old[i + 2], controlX, controlY, x, y);
+          data.push(C$3, old[i + 1], old[i + 2], controlX, controlY, x, y);
           i += 7;
           break;
         case t:
@@ -2944,8 +2854,8 @@ var PathConvert = {
           i += 8;
           break;
         case z:
-        case Z$4:
-          data.push(Z$4);
+        case Z$3:
+          data.push(Z$3);
           i++;
           break;
         case N$3:
@@ -2990,7 +2900,7 @@ var PathConvert = {
           y = old[i + 2];
           i += 4;
           break;
-        case U$4:
+        case U$3:
           arcTo$2(curveMode ? data : copyData(data, old, i, 6), x, y, old[i + 1], old[i + 2], old[i + 3], old[i + 4], old[i + 5], null, setEndPoint$1);
           x = setEndPoint$1.x;
           y = setEndPoint$1.y;
@@ -3020,26 +2930,26 @@ var PathConvert = {
   }
 };
 var { current, pushData, copyData } = PathConvert;
-var { M: M$3, L: L$4, C: C$3, Q: Q$2, Z: Z$3, N: N$2, D: D$2, X: X$2, G: G$2, F: F$2, O: O$2, P: P$2, U: U$3 } = PathCommandMap;
+var { M: M$2, L: L$3, C: C$2, Q: Q$2, Z: Z$2, N: N$2, D: D$2, X: X$2, G: G$2, F: F$2, O: O$2, P: P$2, U: U$2 } = PathCommandMap;
 var startPoint = {};
 var PathCommandDataHelper = {
   beginPath(data) {
     data.length = 0;
   },
   moveTo(data, x, y) {
-    data.push(M$3, x, y);
+    data.push(M$2, x, y);
   },
   lineTo(data, x, y) {
-    data.push(L$4, x, y);
+    data.push(L$3, x, y);
   },
   bezierCurveTo(data, x1, y1, x2, y2, x, y) {
-    data.push(C$3, x1, y1, x2, y2, x, y);
+    data.push(C$2, x1, y1, x2, y2, x, y);
   },
   quadraticCurveTo(data, x1, y1, x, y) {
     data.push(Q$2, x1, y1, x, y);
   },
   closePath(data) {
-    data.push(Z$3);
+    data.push(Z$2);
   },
   rect(data, x, y, width, height) {
     data.push(N$2, x, y, width, height);
@@ -3077,7 +2987,7 @@ var PathCommandDataHelper = {
     }
   },
   arcTo(data, x1, y1, x2, y2, radius) {
-    data.push(U$3, x1, y1, x2, y2, radius);
+    data.push(U$2, x1, y1, x2, y2, radius);
   },
   drawEllipse(data, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise) {
     if (rotation === undefined)
@@ -3087,7 +2997,7 @@ var PathCommandDataHelper = {
     if (endAngle === undefined)
       endAngle = 360;
     BezierHelper.ellipse(null, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise, null, null, startPoint);
-    data.push(M$3, startPoint.x, startPoint.y);
+    data.push(M$2, startPoint.x, startPoint.y);
     ellipse$2(data, x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
   },
   drawArc(data, x, y, radius, startAngle, endAngle, anticlockwise) {
@@ -3096,7 +3006,7 @@ var PathCommandDataHelper = {
     if (endAngle === undefined)
       endAngle = 360;
     BezierHelper.arc(null, x, y, radius, startAngle, endAngle, anticlockwise, null, null, startPoint);
-    data.push(M$3, startPoint.x, startPoint.y);
+    data.push(M$2, startPoint.x, startPoint.y);
     arc$2(data, x, y, radius, startAngle, endAngle, anticlockwise);
   },
   drawPoints(data, points, curve, close) {
@@ -3171,7 +3081,7 @@ class PathCreator {
     return this;
   }
 }
-var { M: M$2, L: L$3, C: C$2, Q: Q$1, Z: Z$2, N: N$1, D: D$1, X: X$1, G: G$1, F: F$1, O: O$1, P: P$1, U: U$2 } = PathCommandMap;
+var { M: M$1, L: L$2, C: C$1, Q: Q$1, Z: Z$1, N: N$1, D: D$1, X: X$1, G: G$1, F: F$1, O: O$1, P: P$1, U: U$1 } = PathCommandMap;
 var debug$4 = Debug.get("PathDrawer");
 var PathDrawer = {
   drawPathByData(drawer, data) {
@@ -3182,15 +3092,15 @@ var PathDrawer = {
     while (i < len) {
       command = data[i];
       switch (command) {
-        case M$2:
+        case M$1:
           drawer.moveTo(data[i + 1], data[i + 2]);
           i += 3;
           break;
-        case L$3:
+        case L$2:
           drawer.lineTo(data[i + 1], data[i + 2]);
           i += 3;
           break;
-        case C$2:
+        case C$1:
           drawer.bezierCurveTo(data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], data[i + 6]);
           i += 7;
           break;
@@ -3198,7 +3108,7 @@ var PathDrawer = {
           drawer.quadraticCurveTo(data[i + 1], data[i + 2], data[i + 3], data[i + 4]);
           i += 5;
           break;
-        case Z$2:
+        case Z$1:
           drawer.closePath();
           i += 1;
           break;
@@ -3230,7 +3140,7 @@ var PathDrawer = {
           drawer.arc(data[i + 1], data[i + 2], data[i + 3], 0, PI2, false);
           i += 4;
           break;
-        case U$2:
+        case U$1:
           drawer.arcTo(data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5]);
           i += 6;
           break;
@@ -3241,7 +3151,7 @@ var PathDrawer = {
     }
   }
 };
-var { M: M$1, L: L$2, C: C$1, Q, Z: Z$1, N, D, X, G, F, O, P, U: U$1 } = PathCommandMap;
+var { M, L: L$1, C, Q, Z, N, D, X, G, F, O, P, U } = PathCommandMap;
 var { toTwoPointBounds, toTwoPointBoundsByQuadraticCurve, arcTo, arc, ellipse } = BezierHelper;
 var { add, copy: copy$3, addPoint, setPoint, addBounds, toBounds } = TwoPointBoundsHelper;
 var debug$3 = Debug.get("PathBounds");
@@ -3265,21 +3175,21 @@ var PathBounds = {
     while (i < len) {
       command = data[i];
       if (i === 0) {
-        if (command === Z$1 || command === C$1 || command === Q) {
+        if (command === Z || command === C || command === Q) {
           setPoint(setPointBounds2, x, y);
         } else {
           setPoint(setPointBounds2, data[i + 1], data[i + 2]);
         }
       }
       switch (command) {
-        case M$1:
-        case L$2:
+        case M:
+        case L$1:
           x = data[i + 1];
           y = data[i + 2];
           addPoint(setPointBounds2, x, y);
           i += 3;
           break;
-        case C$1:
+        case C:
           toX = data[i + 5];
           toY = data[i + 6];
           toTwoPointBounds(x, y, data[i + 1], data[i + 2], data[i + 3], data[i + 4], toX, toY, tempPointBounds);
@@ -3299,7 +3209,7 @@ var PathBounds = {
           y = toY;
           i += 5;
           break;
-        case Z$1:
+        case Z:
           i += 1;
           break;
         case N:
@@ -3346,7 +3256,7 @@ var PathBounds = {
           x += radius;
           i += 4;
           break;
-        case U$1:
+        case U:
           arcTo(null, x, y, data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], tempPointBounds, setEndPoint);
           i === 0 ? copy$3(setPointBounds2, tempPointBounds) : add(setPointBounds2, tempPointBounds);
           x = setEndPoint.x;
@@ -3360,59 +3270,9 @@ var PathBounds = {
     }
   }
 };
-var { M, L: L$1, C, Z, U } = PathCommandMap;
 var PathCorner = {
-  smooth(data, cornerRadius, _cornerSmoothing) {
-    let command;
-    let i = 0, x = 0, y = 0, startX, startY = 0, centerX = 0, centerY = 0;
-    const len = data.length;
-    const smooth = [];
-    while (i < len) {
-      command = data[i];
-      switch (command) {
-        case M:
-          startX = data[i + 1];
-          startY = data[i + 2];
-          i += 3;
-          if (data[i] === L$1) {
-            centerX = startX + (data[i + 1] - startX) / 2;
-            centerY = startY + (data[i + 2] - startY) / 2;
-            smooth.push(M, centerX, centerY);
-          } else {
-            smooth.push(M, startX, startY);
-          }
-          break;
-        case L$1:
-          x = data[i + 1];
-          y = data[i + 2];
-          i += 3;
-          switch (data[i]) {
-            case L$1:
-              smooth.push(U, x, y, data[i + 1], data[i + 2], cornerRadius);
-              break;
-            case Z:
-              smooth.push(U, x, y, startX, startY, cornerRadius);
-              break;
-            default:
-              smooth.push(L$1, x, y);
-          }
-          break;
-        case C:
-          smooth.push(C, data[i + 1], data[i + 2], data[i + 3], data[i + 4], data[i + 5], data[i + 6]);
-          i += 7;
-          break;
-        case Z:
-          smooth.push(U, startX, startY, centerX, centerY, cornerRadius);
-          smooth.push(Z);
-          i += 1;
-          break;
-      }
-    }
-    if (command !== Z) {
-      smooth[1] = startX;
-      smooth[2] = startY;
-    }
-    return smooth;
+  smooth(data, _cornerRadius, _cornerSmoothing) {
+    return data;
   }
 };
 PathHelper.creator = new PathCreator;
@@ -3505,10 +3365,8 @@ class TaskProcessor {
     } else {
       this.delayNumber++;
       setTimeout(() => {
-        if (this.delayNumber) {
-          this.delayNumber--;
-          this.push(task, start);
-        }
+        this.delayNumber--;
+        this.push(task, start);
       }, delay);
     }
     this.isComplete = false;
@@ -3525,7 +3383,6 @@ class TaskProcessor {
     this.parallelSuccessNumber = 0;
     this.list = [];
     this.parallelList = [];
-    this.delayNumber = 0;
   }
   start() {
     if (!this.running) {
@@ -4299,17 +4156,6 @@ var LeafHelper = {
     parent.worldToInner(position);
     t2.set(position);
     parent.add(t2);
-  },
-  hasParent(t2, parent) {
-    if (!parent)
-      return false;
-    let p = t2;
-    while (p) {
-      if (parent === p)
-        return true;
-      p = p.parent;
-    }
-    return false;
   }
 };
 var L = LeafHelper;
@@ -5289,8 +5135,6 @@ var LeafDataProxy = {
       const oldValue = this.__.__getInput(name);
       if (typeof newValue === "object" || oldValue !== newValue) {
         this.__[name] = newValue;
-        if (this.proxyData)
-          this.setProxyAttr(name, newValue);
         const { CHANGE } = PropertyEvent;
         const event = new PropertyEvent(CHANGE, this, name, oldValue, newValue);
         if (this.hasEvent(CHANGE) && !this.isLeafer)
@@ -5299,21 +5143,10 @@ var LeafDataProxy = {
       }
     } else {
       this.__[name] = newValue;
-      if (this.proxyData)
-        this.setProxyAttr(name, newValue);
     }
   },
   __getAttr(name) {
-    if (this.proxyData)
-      return this.getProxyAttr(name);
     return this.__.__get(name);
-  },
-  setProxyAttr(name, newValue) {
-    if (this.proxyData[name] !== newValue)
-      this.proxyData[name] = newValue;
-  },
-  getProxyAttr(name) {
-    return this.proxyData[name];
   }
 };
 var { sin, cos } = Math;
@@ -5514,10 +5347,6 @@ var LeafHit = {
       setRadius(point2, this.__.hitRadius);
     }
     toInnerRadiusPointOf(point2, this.__world, inner);
-    if (this.__.hitBox) {
-      if (BoundsHelper.hitRadiusPoint(this.__layout.boxBounds, inner))
-        return true;
-    }
     return this.__hit(inner);
   },
   __drawHitPath(canvas) {
@@ -5557,20 +5386,12 @@ var LeafMask = {
   __updateMask(value) {
     this.__hasMask = value ? true : this.children.some((item) => item.__.isMask);
   },
-  __renderMask(canvas, content, mask, recycle) {
-    content.opacity = 1;
+  __renderMask(canvas, content, mask) {
     content.resetTransform();
     content.useMask(mask);
-    canvas.opacity = this.__worldOpacity;
     canvas.resetTransform();
+    canvas.opacity = this.__worldOpacity;
     canvas.copyWorld(content);
-    if (recycle) {
-      content.recycle();
-      mask.recycle();
-    } else {
-      content.clear();
-      mask.clear();
-    }
   },
   __removeMask(child) {
     if (child) {
@@ -5621,22 +5442,26 @@ var BranchRender = {
     const { children } = this;
     if (this.__hasMask && children.length > 1) {
       let mask;
-      const maskCanvas = canvas.getSameCanvas();
-      const contentCanvas = canvas.getSameCanvas();
+      let maskCanvas = canvas.getSameCanvas();
+      let contentCanvas = canvas.getSameCanvas();
       for (let i = 0, len = children.length;i < len; i++) {
         child = children[i];
         if (child.isMask) {
           if (mask) {
             this.__renderMask(canvas, contentCanvas, maskCanvas);
+            maskCanvas.clear();
+            contentCanvas.clear();
           } else {
             mask = true;
           }
           child.__render(maskCanvas, options);
           continue;
         }
-        child.__render(mask ? contentCanvas : canvas, options);
+        child.__render(contentCanvas, options);
       }
-      this.__renderMask(canvas, contentCanvas, maskCanvas, true);
+      this.__renderMask(canvas, contentCanvas, maskCanvas);
+      maskCanvas.recycle();
+      contentCanvas.recycle();
     } else {
       const { bounds, hideBounds } = options;
       for (let i = 0, len = children.length;i < len; i++) {
@@ -5762,9 +5587,6 @@ var Leaf = class Leaf2 {
   }
   set(_data) {
   }
-  get(_options) {
-    return;
-  }
   toJSON() {
     return this.__.__getInputData();
   }
@@ -5774,17 +5596,6 @@ var Leaf = class Leaf2 {
   __setAttr(_attrName, _newValue) {
   }
   __getAttr(_attrName) {
-    return;
-  }
-  setProxyAttr(_attrName, _newValue) {
-  }
-  getProxyAttr(_attrName) {
-    return;
-  }
-  find(_condition) {
-    return;
-  }
-  findOne(_condition) {
     return;
   }
   forceUpdate(attrName) {
@@ -5828,7 +5639,7 @@ var Leaf = class Leaf2 {
   }
   __updateMask(_value) {
   }
-  __renderMask(_canvas, _content, _mask, _recycle) {
+  __renderMask(_canvas, _content, _mask) {
   }
   __removeMask(_child) {
   }
@@ -6125,7 +5936,7 @@ var PluginManager = {
     });
   }
 };
-// node_modules/@leafer-ui/core/dist/core.esm.js
+// /mnt/d/project/typescript/node_modules/@leafer-ui/core/dist/core.esm.js
 var __decorate2 = function(decorators, target, key, desc) {
   var c2 = arguments.length, r = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
   if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
@@ -6578,17 +6389,8 @@ var UI = UI_1 = class UI2 extends Leaf {
   set(data) {
     Object.assign(this, data);
   }
-  get(options) {
-    return this.__.__getInputData(options);
-  }
-  getProxyData() {
-    return;
-  }
-  find(condition) {
-    return this.leafer ? this.leafer.selector.getBy(condition, this) : [];
-  }
-  findOne(condition) {
-    return this.leafer ? this.leafer.selector.getBy(condition, this, true) : null;
+  get() {
+    return this.__.__getInputData();
   }
   getPath(curve) {
     const path = this.__.path;
@@ -6713,9 +6515,6 @@ __decorate2([
 __decorate2([
   strokeType("path")
 ], UI.prototype, "hitStroke", undefined);
-__decorate2([
-  hitType(false)
-], UI.prototype, "hitBox", undefined);
 __decorate2([
   hitType(true)
 ], UI.prototype, "hitChildren", undefined);
@@ -7043,7 +6842,7 @@ var Ellipse = class Ellipse2 extends UI {
         }
         ellipse2(path, rx, ry, rx, ry, 0, 360, 0, true);
       }
-      if (Platform.ellipseToCurve)
+      if (Platform.name === "node")
         this.__.path = PathConvert.toCanvasData(path, true);
     } else {
       if (startAngle || endAngle) {
@@ -7354,7 +7153,7 @@ __decorate2([
 Canvas2 = __decorate2([
   registerUI()
 ], Canvas2);
-var { copyAndSpread: copyAndSpread2, includes, spread, setByList } = BoundsHelper;
+var { copyAndSpread: copyAndSpread2, includes, spread } = BoundsHelper;
 var Text = class Text2 extends UI {
   get __tag() {
     return "Text";
@@ -7389,19 +7188,18 @@ var Text = class Text2 extends UI {
   __updateBoxBounds() {
     const data = this.__;
     const layout = this.__layout;
-    const { lineHeight, letterSpacing, fontFamily, fontSize, fontWeight, italic, textCase, textOverflow } = data;
-    const width = data.__getInput("width");
-    const height = data.__getInput("height");
+    const { lineHeight, letterSpacing, fontFamily, fontSize, fontWeight, italic, textCase } = data;
     data.__lineHeight = UnitConvert.number(lineHeight, fontSize);
     data.__letterSpacing = UnitConvert.number(letterSpacing, fontSize);
     data.__baseLine = data.__lineHeight - (data.__lineHeight - fontSize * 0.7) / 2;
     data.__font = `${italic ? "italic " : ""}${textCase === "small-caps" ? "small-caps " : ""}${fontWeight !== "normal" ? fontWeight + " " : ""}${fontSize}px ${fontFamily}`;
-    data.__clipText = textOverflow !== "show" && (width || height);
     this.__updateTextDrawData();
     const { bounds: bounds2 } = data.__textDrawData;
     const b = layout.boxBounds;
     if (data.__lineHeight < fontSize)
       spread(bounds2, fontSize / 2);
+    const width = data.__getInput("width");
+    const height = data.__getInput("height");
     if (width && height) {
       super.__updateBoxBounds();
     } else {
@@ -7415,9 +7213,6 @@ var Text = class Text2 extends UI {
     if (contentBounds !== layout.contentBounds) {
       layout.contentBounds = contentBounds;
       layout.renderChanged = true;
-      setByList(data.__textBoxBounds = {}, [b, bounds2]);
-    } else {
-      data.__textBoxBounds = contentBounds;
     }
   }
   __updateRenderSpread() {
@@ -7427,7 +7222,7 @@ var Text = class Text2 extends UI {
     return width;
   }
   __updateRenderBounds() {
-    copyAndSpread2(this.__layout.renderBounds, this.__.__textBoxBounds, this.__layout.renderSpread);
+    copyAndSpread2(this.__layout.renderBounds, this.__layout.contentBounds, this.__layout.renderSpread);
   }
 };
 __decorate2([
@@ -7445,9 +7240,6 @@ __decorate2([
 __decorate2([
   affectStrokeBoundsType("outside")
 ], Text.prototype, "strokeAlign", undefined);
-__decorate2([
-  hitType("all")
-], Text.prototype, "hitFill", undefined);
 __decorate2([
   boundsType("")
 ], Text.prototype, "text", undefined);
@@ -7487,9 +7279,6 @@ __decorate2([
 __decorate2([
   boundsType("top")
 ], Text.prototype, "verticalAlign", undefined);
-__decorate2([
-  boundsType("normal")
-], Text.prototype, "textWrap", undefined);
 __decorate2([
   boundsType("show")
 ], Text.prototype, "textOverflow", undefined);
@@ -7735,11 +7524,11 @@ var Leafer = class Leafer2 extends Group {
   }
   __setApp() {
   }
-  __bindApp(app2) {
-    this.selector = app2.selector;
-    this.interaction = app2.interaction;
-    this.canvasManager = app2.canvasManager;
-    this.hitCanvasManager = app2.hitCanvasManager;
+  __bindApp(app) {
+    this.selector = app.selector;
+    this.interaction = app.interaction;
+    this.canvasManager = app.canvasManager;
+    this.hitCanvasManager = app.hitCanvasManager;
   }
   __setLeafer(leafer) {
     this.leafer = leafer;
@@ -8021,7 +7810,7 @@ App = __decorate2([
   registerUI()
 ], App);
 
-// node_modules/leafer-ui/dist/web.esm.js
+// /mnt/d/project/typescript/node_modules/leafer-ui/dist/web.esm.js
 var updateMatrix = function(updateList, levelList) {
   let layout;
   updateList.list.forEach((leaf) => {
@@ -8378,9 +8167,8 @@ var checkImage = function(ui, canvas, paint, allowPaint) {
         if (!paint.patternTask) {
           paint.patternTask = ImageManager.patternTasker.add(() => __awaiter2(this, undefined, undefined, function* () {
             paint.patternTask = null;
-            if (canvas.bounds.hit(ui.__world))
-              createPattern(ui, paint, canvas.pixelRatio);
-            ui.forceUpdate("surface");
+            if (canvas.bounds.hit(ui.__world) && createPattern(ui, paint, canvas.pixelRatio))
+              ui.forceUpdate("surface");
           }), 300);
         }
       }
@@ -8895,8 +8683,6 @@ var createRows = function(drawData, content, style) {
   const { width, height } = bounds2;
   const charMode = width || height || __letterSpacing || textCase !== "none";
   if (charMode) {
-    const wrap = style.textWrap !== "none";
-    const breakAll = style.textWrap === "break";
     paraStart = true;
     lastCharType = null;
     startCharSize = charWidth = charSize = wordWidth = rowWidth = 0;
@@ -8922,21 +8708,15 @@ var createRows = function(drawData, content, style) {
         langBreak = charType === Single && (lastCharType === Single || lastCharType === Letter) || lastCharType === Single && charType !== After;
         afterBreak = (charType === Before || charType === Single) && (lastCharType === Symbol || lastCharType === After);
         realWidth = paraStart && paraIndent ? width - paraIndent : width;
-        if (wrap && (width && rowWidth + wordWidth + charWidth > realWidth)) {
-          if (breakAll) {
+        if (width && rowWidth + wordWidth + charWidth > realWidth) {
+          if (!afterBreak)
+            afterBreak = charType === Letter && lastCharType == After;
+          if (langBreak || afterBreak || charType === Break || charType === Before || charType === Single || wordWidth + charWidth > realWidth) {
             if (wordWidth)
               addWord();
             addRow();
           } else {
-            if (!afterBreak)
-              afterBreak = charType === Letter && lastCharType == After;
-            if (langBreak || afterBreak || charType === Break || charType === Before || charType === Single || wordWidth + charWidth > realWidth) {
-              if (wordWidth)
-                addWord();
-              addRow();
-            } else {
-              addRow();
-            }
+            addRow();
           }
         }
         if (char === " " && paraStart !== true && rowWidth + wordWidth === 0)
@@ -9009,12 +8789,15 @@ var layoutChar = function(drawData, style, width, _height) {
     if (row.words) {
       indentWidth = paraIndent && row.paraStart ? paraIndent : 0;
       addWordWidth = width && textAlign === "justify" && row.words.length > 1 ? (width - row.width - indentWidth) / (row.words.length - 1) : 0;
-      mode = letterSpacing || row.isOverflow ? CharMode : addWordWidth > 0.01 ? WordMode : TextMode;
-      if (row.isOverflow && !letterSpacing)
-        row.textMode = true;
-      if (mode === TextMode) {
+      mode = letterSpacing || row.isOverflow ? CharMode : addWordWidth > 0.01 ? WordMode : RowMode;
+      if (mode === RowMode) {
+        row.text = "";
         row.x += indentWidth;
-        toTextChar$1(row);
+        row.words.forEach((word) => {
+          word.data.forEach((char) => {
+            row.text += char.char;
+          });
+        });
       } else {
         row.x += indentWidth;
         charX = row.x;
@@ -9038,14 +8821,6 @@ var layoutChar = function(drawData, style, width, _height) {
     }
   });
 };
-var toTextChar$1 = function(row) {
-  row.text = "";
-  row.words.forEach((word) => {
-    word.data.forEach((char) => {
-      row.text += char.char;
-    });
-  });
-};
 var toWordChar = function(data, charX, wordChar) {
   data.forEach((char) => {
     wordChar.char += char.char;
@@ -9065,10 +8840,10 @@ var toChar = function(data, charX, rowData) {
 };
 var layoutText = function(drawData, style) {
   const { rows, bounds: bounds2 } = drawData;
-  const { __lineHeight, __baseLine, __letterSpacing, __clipText, textAlign, verticalAlign, paraSpacing } = style;
+  const { __lineHeight, __baseLine, __letterSpacing, textAlign, verticalAlign, paraSpacing, textOverflow } = style;
   let { x, y, width, height } = bounds2, realHeight = __lineHeight * rows.length + (paraSpacing ? paraSpacing * (drawData.paraNumber - 1) : 0);
   let starY = __baseLine;
-  if (__clipText && realHeight > height) {
+  if (textOverflow !== "show" && realHeight > height) {
     realHeight = Math.max(height, __lineHeight);
     drawData.overflow = rows.length;
   } else {
@@ -9115,55 +8890,36 @@ var layoutText = function(drawData, style) {
       bounds2.x = rowX;
     if (rowWidth > bounds2.width)
       bounds2.width = rowWidth;
-    if (__clipText && width && width < rowWidth) {
-      row.isOverflow = true;
-      if (!drawData.overflow)
-        drawData.overflow = rows.length;
-    }
   }
   bounds2.y = y;
   bounds2.height = realHeight;
 };
-var clipText = function(drawData, style) {
+var clipText = function(drawData, textOverflow) {
   const { rows, overflow } = drawData;
-  let { textOverflow } = style;
   rows.splice(overflow);
   if (textOverflow !== "hide") {
     if (textOverflow === "ellipsis")
       textOverflow = "...";
-    let char, charRight;
     const ellipsisWidth = Platform.canvas.measureText(textOverflow).width;
-    const right2 = style.x + style.width - ellipsisWidth;
-    const list3 = style.textWrap === "none" ? rows : [rows[overflow - 1]];
-    list3.forEach((row) => {
-      if (row.isOverflow && row.data) {
-        let end = row.data.length - 1;
-        for (let i = end;i > -1; i--) {
-          char = row.data[i];
-          charRight = char.x + char.width;
-          if (i === end && charRight < right2) {
-            break;
-          } else if (charRight < right2 && char.char !== " ") {
-            row.data.splice(i + 1);
-            row.width -= char.width;
-            break;
-          }
-          row.width -= char.width;
-        }
-        row.width += ellipsisWidth;
-        row.data.push({ char: textOverflow, x: charRight });
-        if (row.textMode)
-          toTextChar(row);
+    const row = rows[overflow - 1];
+    let char, end = row.data.length - 1, charRight;
+    const { x, width } = drawData.bounds;
+    const right2 = x + width - ellipsisWidth;
+    for (let i = end;i > -1; i--) {
+      char = row.data[i];
+      charRight = char.x + char.width;
+      if (i === end && charRight < right2) {
+        break;
+      } else if (charRight < right2 && char.char !== " ") {
+        row.data.splice(i + 1);
+        row.width -= char.width;
+        break;
       }
-    });
+      row.width -= char.width;
+    }
+    row.width += ellipsisWidth;
+    row.data.push({ char: textOverflow, x: charRight });
   }
-};
-var toTextChar = function(row) {
-  row.text = "";
-  row.data.forEach((char) => {
-    row.text += char.char;
-  });
-  row.data = null;
 };
 var decorationText = function(drawData, style) {
   const { fontSize } = style;
@@ -9696,7 +9452,7 @@ class Renderer {
 }
 var { hitRadiusPoint } = BoundsHelper;
 
-class Pather {
+class FindPath {
   constructor(target, selector) {
     this.target = target;
     this.selector = selector;
@@ -9815,107 +9571,112 @@ class Pather {
 class Selector {
   constructor(target, userConfig) {
     this.config = {};
-    this.innerIdMap = {};
-    this.idMap = {};
-    this.methods = {
-      id: (leaf, name) => leaf.id === name ? this.idMap[name] = leaf : 0,
-      innerId: (leaf, innerId) => leaf.innerId === innerId ? this.innerIdMap[innerId] = leaf : 0,
-      className: (leaf, name) => leaf.className === name ? 1 : 0,
-      tag: (leaf, name) => leaf.__tag === name ? 1 : 0
-    };
+    this.innerIdList = {};
+    this.idList = {};
+    this.classNameList = {};
+    this.tagNameList = {};
     this.target = target;
     if (userConfig)
       this.config = DataHelper.default(userConfig, this.config);
-    this.pather = new Pather(target, this);
+    this.findPath = new FindPath(target, this);
     this.__listenEvents();
   }
   getByPoint(hitPoint, hitRadius, options) {
     if (Platform.name === "node")
       this.target.emit(LayoutEvent.CHECK_UPDATE);
-    return this.pather.getByPoint(hitPoint, hitRadius, options);
+    return this.findPath.getByPoint(hitPoint, hitRadius, options);
   }
-  getBy(condition, branch, one, options) {
-    switch (typeof condition) {
-      case "number":
-        const leaf = this.getByInnerId(condition, branch);
-        return one ? leaf : leaf ? [leaf] : [];
-      case "string":
-        switch (condition[0]) {
-          case "#":
-            const leaf2 = this.getById(condition.substring(1), branch);
-            return one ? leaf2 : leaf2 ? [leaf2] : [];
-          case ".":
-            return this.getByMethod(this.methods.className, branch, one, condition.substring(1));
-          default:
-            return this.getByMethod(this.methods.tag, branch, one, condition);
-        }
-      case "function":
-        return this.getByMethod(condition, branch, one, options);
+  find(name, branch) {
+    if (typeof name === "number") {
+      return this.getByInnerId(name, branch);
+    } else if (name.startsWith("#")) {
+      return this.getById(name.substring(1), branch);
+    } else if (name.startsWith(".")) {
+      return this.getByClassName(name.substring(1), branch);
+    } else {
+      return this.getByTagName(name, branch);
     }
   }
-  getByInnerId(innerId, branch) {
-    const cache = this.innerIdMap[innerId];
+  getByInnerId(name, branch) {
+    let cache = this.innerIdList[name];
     if (cache)
       return cache;
-    this.eachFind(this.toChildren(branch), this.methods.innerId, null, innerId);
-    return this.findLeaf;
-  }
-  getById(id, branch) {
-    const cache = this.idMap[id];
-    if (cache && LeafHelper.hasParent(cache, branch || this.target))
-      return cache;
-    this.eachFind(this.toChildren(branch), this.methods.id, null, id);
-    return this.findLeaf;
-  }
-  getByClassName(className, branch) {
-    return this.getByMethod(this.methods.className, branch, false, className);
-  }
-  getByTag(tag, branch) {
-    return this.getByMethod(this.methods.tag, branch, false, tag);
-  }
-  getByMethod(method, branch, one, options) {
-    const list3 = one ? null : [];
-    this.eachFind(this.toChildren(branch), method, list3, options);
-    return list3 || this.findLeaf;
-  }
-  eachFind(children, method, list3, options) {
-    let child;
-    for (let i = 0, len = children.length;i < len; i++) {
-      child = children[i];
-      if (method(child, options)) {
-        if (list3) {
-          list3.push(child);
-        } else {
-          this.findLeaf = child;
-          return;
-        }
+    if (!branch)
+      branch = this.target;
+    let find;
+    this.loopFind(branch, (leaf) => {
+      if (leaf.innerId === name) {
+        find = leaf;
+        this.innerIdList[name] = find;
+        return true;
+      } else {
+        return false;
       }
-      if (child.isBranch)
-        this.eachFind(child.children, method, list3, options);
-    }
+    });
+    return find;
   }
-  toChildren(branch) {
-    this.findLeaf = null;
-    return [branch || this.target];
+  getById(name, branch) {
+    let cache = this.idList[name];
+    if (cache)
+      return cache;
+    if (!branch)
+      branch = this.target;
+    let find;
+    this.loopFind(branch, (leaf) => {
+      if (leaf.id === name) {
+        find = leaf;
+        this.idList[name] = find;
+        return true;
+      } else {
+        return false;
+      }
+    });
+    return find;
+  }
+  getByClassName(name, branch) {
+    if (!branch)
+      branch = this.target;
+    let find = [];
+    this.loopFind(branch, (leaf) => {
+      if (leaf.className === name)
+        find.push(leaf);
+      return false;
+    });
+    return find;
+  }
+  getByTagName(name, branch) {
+    if (!branch)
+      branch = this.target;
+    let find = [];
+    this.loopFind(branch, (leaf) => {
+      if (leaf.__tag === name)
+        find.push(leaf);
+      return false;
+    });
+    return find;
+  }
+  loopFind(branch, find) {
+    if (find(branch))
+      return;
+    const { children } = branch;
+    for (let i = 0, len = children.length;i < len; i++) {
+      branch = children[i];
+      if (find(branch))
+        return;
+      if (branch.isBranch)
+        this.loopFind(branch, find);
+    }
   }
   __onRemoveChild(event) {
-    const { id, innerId } = event.child;
-    if (this.idMap[id])
-      delete this.idMap[id];
-    if (this.innerIdMap[innerId])
-      delete this.innerIdMap[innerId];
-  }
-  __checkIdChange(event) {
-    if (event.attrName === "id") {
-      const id = event.oldValue;
-      if (this.idMap[id])
-        delete this.idMap[id];
-    }
+    const target = event.target;
+    if (this.idList[target.id])
+      this.idList[target.id] = null;
+    if (this.innerIdList[target.id])
+      this.innerIdList[target.innerId] = null;
   }
   __listenEvents() {
     this.__eventIds = [
-      this.target.on_(ChildEvent.REMOVE, this.__onRemoveChild, this),
-      this.target.on_(PropertyEvent.CHANGE, this.__checkIdChange, this)
+      this.target.on_(ChildEvent.REMOVE, this.__onRemoveChild, this)
     ];
   }
   __removeListenEvents() {
@@ -9925,10 +9686,11 @@ class Selector {
   destroy() {
     if (this.__eventIds.length) {
       this.__removeListenEvents();
-      this.pather.destroy();
-      this.findLeaf = null;
-      this.innerIdMap = {};
-      this.idMap = {};
+      this.findPath.destroy();
+      this.innerIdList = {};
+      this.idList = {};
+      this.classNameList = {};
+      this.tagNameList = {};
     }
   }
 }
@@ -10149,7 +9911,7 @@ var WheelEventHelper = {
     let { zoomMode, zoomSpeed } = config;
     const delta = e.deltaY || e.deltaX;
     if (zoomMode) {
-      zoom = zoomMode === "mouse" ? true : !e.deltaX && (Platform.intWheelDeltaY ? Math.abs(delta) > 17 : Math.ceil(delta) !== delta);
+      zoom = !e.deltaX && (Platform.intWheelDeltaY ? Math.abs(delta) > 17 : Math.ceil(delta) !== delta);
       if (e.shiftKey || e.metaKey || e.ctrlKey)
         zoom = true;
     } else {
@@ -10581,7 +10343,7 @@ var rows = [];
 var bounds2;
 var CharMode = 0;
 var WordMode = 1;
-var TextMode = 2;
+var RowMode = 2;
 var TextConvert2 = {
   getDrawData(content, style) {
     if (typeof content !== "string")
@@ -10589,7 +10351,7 @@ var TextConvert2 = {
     let x = 0, y = 0;
     let width = style.__getInput("width") || 0;
     let height = style.__getInput("height") || 0;
-    const { textDecoration, __font, padding } = style;
+    const { textDecoration, textOverflow, __font, padding } = style;
     if (padding) {
       const [top, right2, bottom2, left] = MathHelper.fourNumber(padding);
       if (width) {
@@ -10611,7 +10373,7 @@ var TextConvert2 = {
     layoutText(drawData, style);
     layoutChar(drawData, style, width);
     if (drawData.overflow)
-      clipText(drawData, style);
+      clipText(drawData, textOverflow);
     if (textDecoration !== "none")
       decorationText(drawData, style);
     return drawData;
@@ -10683,16 +10445,46 @@ Object.assign(ColorConvert, ColorConvert2);
 Object.assign(Export, Export2);
 useCanvas();
 
-// src/leafer.bs.js
-var lf = new Leafer({
-  view: "mydiv"
+// app.ts
+var getSec = function() {
+  return Math.floor(Date.now());
+};
+var rectUpdate = function() {
+  if (getSec() - tick > rectTimeDuration) {
+    tick = getSec();
+    flag = (flag + 1) % IPaint.length;
+    rect3.fill = IPaint[flag];
+  }
+  return;
+};
+var leafer = new Leafer({
+  view: "myview",
+  width: 600,
+  height: 400
 });
-var re = new Rect({
-  x: 100,
-  y: 100,
-  width: 200,
-  height: 200,
-  fill: "#32cd79",
+var x_offset = [850, 894, 938, 982, 1026];
+var IPaint = [];
+for (let x1 of x_offset) {
+  let fill2 = {
+    type: "image",
+    url: "dragon.png",
+    mode: "clip",
+    offset: { x: -x1, y: 2 },
+    rotation: 0
+  };
+  IPaint.push(fill2);
+}
+var rect3 = new Rect({
+  width: 39,
+  height: 56,
+  fill: IPaint[0],
   draggable: true
 });
-_1(lf.add, re);
+leafer.add(rect3);
+var flag = 0;
+var tick = getSec();
+var rectTimeDuration = 200;
+var event = leafer.on_(AnimateEvent.FRAME, () => {
+  rectUpdate();
+  console.log("test");
+});
