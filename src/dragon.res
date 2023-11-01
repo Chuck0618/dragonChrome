@@ -14,8 +14,8 @@ type fillConfig={
 } 
 
 type rectConfig={
-   x: int,
-   y: int,
+   mutable x: int,
+   mutable y: int,
     width: int,
     height: int,
     mutable fill: option<fillConfig>,
@@ -41,7 +41,7 @@ let leafer = leaferJS({view: window,
 width: 600,
 height: 400,
 })
-
+// offset in soul png dragon.png
 let x_offset:array<int> =[850,850+44,850+44*2,850+44*3,850+44*4];
 let fillContainer:array<fillConfig>=[]
 
@@ -54,47 +54,56 @@ let fillx=(x1:int) =>{
     }
     let _ = Js.Array2.push(fillContainer, f);
 };
-
+//save fill style to fillContainer
 Js.Array2.forEach(x_offset, x=>fillx(x))
 Js.Array2.forEach(fillContainer, x=>Js.log(x));
 
-// let evnetList = event()
-Js.log(event._frame);
+// test event.frame_ 
+Js.log(event.frame_);
 
-
-
+// rect object 
 let rectCurrent=rect({
-    x: 0,
-    y: 0,
+    x: 100,
+    y: 100,
     width: 39,
     height: 56,
     fill:  fillContainer[0],
     draggable: true,
 })
-
+// add rectCurrent to leafer 
 add(leafer,rectCurrent);
 
 let flag = ref(0); // which config of fillContainer is using
-let flagTimeup = ref(false);
+let flagTimeUp = ref(false);
+let flagMove = ref(false);
 
 let rectTimeDuration=200;
-let _= Js.Global.setInterval(() => {flagTimeup.contents = true; Js.log("time up!")}, rectTimeDuration)
+let _= Js.Global.setInterval(() => {flagTimeUp.contents = true; Js.log("time up!")}, rectTimeDuration)
 
 let rectUpdate = () => {
-    if (flagTimeup.contents == true ){
-        flagTimeup.contents = false
+    if (flagTimeUp.contents == true ){
+        flagTimeUp.contents = false
         flag.contents = mod( (flag.contents+1) , Js.Array2.length(fillContainer));
         let fill = fillContainer[flag.contents]; 
         rectCurrent.fill = fill;
         Js.log("run update")
     }
+    if (flagMove.contents == true){
+        rectCurrent.x = rectCurrent.x+1;        
+    }
 }
 
- on_(leafer, event._frame , () => { 
+ on_(leafer, event.frame_ , () => { 
     rectUpdate();
     // Js.log("test")
     // rect.forceUpdate();
 })
 
-let name = ()=>{ "my name is dragon"}
- 
+let appname = ()=>{ "my name is dragon"}
+
+let moveDragon=()=>{
+    flagMove.contents = true;
+    let _ = Js.Global.setTimeout(()=>{flagMove.contents = false }, 4000);
+}
+
+moveDragon()

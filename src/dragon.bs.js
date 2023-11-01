@@ -42,8 +42,8 @@ fillContainer.forEach(function (x) {
 console.log(LeaferUi.AnimateEvent.FRAME);
 
 var rectCurrent = new LeaferUi.Rect({
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 100,
       width: 39,
       height: 56,
       fill: fillContainer[0],
@@ -56,33 +56,50 @@ var flag = {
   contents: 0
 };
 
-var flagTimeup = {
+var flagTimeUp = {
+  contents: false
+};
+
+var flagMove = {
   contents: false
 };
 
 setInterval((function (param) {
-        flagTimeup.contents = true;
+        flagTimeUp.contents = true;
         console.log("time up!");
       }), 200);
 
 function rectUpdate(param) {
-  if (flagTimeup.contents !== true) {
+  if (flagTimeUp.contents === true) {
+    flagTimeUp.contents = false;
+    flag.contents = Caml_int32.mod_(flag.contents + 1 | 0, fillContainer.length);
+    var fill = fillContainer[flag.contents];
+    rectCurrent.fill = fill;
+    console.log("run update");
+  }
+  if (flagMove.contents === true) {
+    rectCurrent.x = rectCurrent.x + 1 | 0;
     return ;
   }
-  flagTimeup.contents = false;
-  flag.contents = Caml_int32.mod_(flag.contents + 1 | 0, fillContainer.length);
-  var fill = fillContainer[flag.contents];
-  rectCurrent.fill = fill;
-  console.log("run update");
+  
 }
 
 leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
         rectUpdate(undefined);
       }));
 
-function name(param) {
+function appname(param) {
   return "my name is dragon";
 }
+
+function moveDragon(param) {
+  flagMove.contents = true;
+  setTimeout((function (param) {
+          flagMove.contents = false;
+        }), 4000);
+}
+
+moveDragon(undefined);
 
 var rectTimeDuration = 200;
 
@@ -93,9 +110,11 @@ export {
   fillx ,
   rectCurrent ,
   flag ,
-  flagTimeup ,
+  flagTimeUp ,
+  flagMove ,
   rectTimeDuration ,
   rectUpdate ,
-  name ,
+  appname ,
+  moveDragon ,
 }
 /* leafer Not a pure module */

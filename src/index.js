@@ -1,3 +1,3 @@
 import * as main from "./dragon.bs"
 
-console.log(main.name());
+console.log(main.appname());

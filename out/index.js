@@ -10634,17 +10634,26 @@ var fillx = function(x1) {
   fillContainer.push(f);
 };
 var rectUpdate = function(param) {
-  if (flagTimeup.contents !== true) {
+  if (flagTimeUp.contents === true) {
+    flagTimeUp.contents = false;
+    flag.contents = mod_(flag.contents + 1 | 0, fillContainer.length);
+    var fill2 = fillContainer[flag.contents];
+    rectCurrent.fill = fill2;
+    console.log("run update");
+  }
+  if (flagMove.contents === true) {
+    rectCurrent.x = rectCurrent.x + 1 | 0;
     return;
   }
-  flagTimeup.contents = false;
-  flag.contents = mod_(flag.contents + 1 | 0, fillContainer.length);
-  var fill2 = fillContainer[flag.contents];
-  rectCurrent.fill =  fill2 ;
-  console.log("run update");
 };
-var name = function(param) {
+var appname = function(param) {
   return "my name is dragon";
+};
+var moveDragon = function(param) {
+  flagMove.contents = true;
+  setTimeout(function(param2) {
+    flagMove.contents = false;
+  }, 4000);
 };
 var leafer = new Leafer({
   view: window,
@@ -10665,27 +10674,31 @@ fillContainer.forEach(function(x) {
 });
 console.log(AnimateEvent.FRAME);
 var rectCurrent = new Rect({
-  x: 0,
-  y: 0,
+  x: 100,
+  y: 100,
   width: 39,
   height: 56,
-  fill: "black",
+  fill: fillContainer[0],
   draggable: true
 });
 leafer.add(rectCurrent);
 var flag = {
   contents: 0
 };
-var flagTimeup = {
+var flagTimeUp = {
+  contents: false
+};
+var flagMove = {
   contents: false
 };
 setInterval(function(param) {
-  flagTimeup.contents = true;
+  flagTimeUp.contents = true;
   console.log("time up!");
-}, 2000);
+}, 200);
 leafer.on_(AnimateEvent.FRAME, function(param) {
   rectUpdate(undefined);
 });
+moveDragon(undefined);
 
 // src/index.js
-console.log(name());
+console.log(appname());
