@@ -26,7 +26,7 @@ function fillx(x1) {
   };
   var f = {
     type: "image",
-    url: "dragon.png",
+    url: "./src/dragon.png",
     mode: "clip",
     offset: f_offset
   };
@@ -46,7 +46,7 @@ var rectCurrent = new LeaferUi.Rect({
       y: 0,
       width: 39,
       height: 56,
-      fill: "b",
+      fill: fillContainer[0],
       draggable: true
     });
 

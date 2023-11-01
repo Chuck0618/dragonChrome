@@ -23,7 +23,7 @@ type rectConfig={
 }
 type rectHandle=rectConfig;
 
-type eventHandle={@as("FRAME") _frame: string}
+type eventHandle={@as("FRAME") frame_: string}
 
 @new @module("leafer-ui") external 
 leaferJS: leaferConfig => leaferHandle = "Leafer"

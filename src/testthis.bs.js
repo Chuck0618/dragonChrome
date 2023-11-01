@@ -12,7 +12,14 @@ function fun(a) {
 
 console.log("hello");
 
+var a = 101;
+
+var a$1 = a + 2 | 0;
+
+console.log(a$1);
+
 export {
   fun ,
+  a$1 as a,
 }
 /*  Not a pure module */
