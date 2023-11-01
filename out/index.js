@@ -1,3 +1,18 @@
+// node_modules/rescript/lib/es6/js_int.js
+var max = 2147483647;
+var min = -2147483648;
+
+// node_modules/rescript/lib/es6/js_math.js
+var floor_int = function(f) {
+  if (f > max) {
+    return max;
+  } else if (f < min) {
+    return min;
+  } else {
+    return Math.floor(f);
+  }
+};
+
 // node_modules/@leafer/core/dist/core.esm.js
 var get = function() {
   return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
@@ -440,11 +455,11 @@ var IncrementId = {
 };
 var I$2 = IncrementId;
 var MathHelper = {
-  within(value, min, max) {
-    if (value < min)
-      value = min;
-    if (value > max)
-      value = max;
+  within(value, min2, max2) {
+    if (value < min2)
+      value = min2;
+    if (value > max2)
+      value = max2;
     return value;
   },
   fourNumber(num) {
@@ -2415,15 +2430,15 @@ for (let key in P$4) {
 var RectHelper = {
   drawRoundRect(drawer, x, y, width, height, cornerRadius) {
     let [topLeft, topRight, bottomRight, bottomLeft] = MathHelper.fourNumber(cornerRadius);
-    const max = Math.min(width / 2, height / 2);
-    if (topLeft > max)
-      topLeft = max;
-    if (topRight > max)
-      topRight = max;
-    if (bottomRight > max)
-      bottomRight = max;
-    if (bottomLeft > max)
-      bottomLeft = max;
+    const max2 = Math.min(width / 2, height / 2);
+    if (topLeft > max2)
+      topLeft = max2;
+    if (topRight > max2)
+      topRight = max2;
+    if (bottomRight > max2)
+      bottomRight = max2;
+    if (bottomLeft > max2)
+      bottomLeft = max2;
     topLeft ? drawer.moveTo(x + topLeft, y) : drawer.moveTo(x, y);
     topRight ? drawer.arcTo(x + width, y, x + width, y + height, topRight) : drawer.lineTo(x + width, y);
     bottomRight ? drawer.arcTo(x + width, y + height, x, y + height, bottomRight) : drawer.lineTo(x + width, y + height);
@@ -6071,12 +6086,12 @@ var design = function(leafer) {
   leafer.__eventIds.push(leafer.on_(MoveEvent.BEFORE_MOVE, (e) => {
     LeafHelper.moveWorld(leafer.zoomLayer, e.moveX, e.moveY);
   }), leafer.on_(ZoomEvent.BEFORE_ZOOM, (e) => {
-    const { scaleX } = leafer.zoomLayer.__, { min, max } = leafer.config.zoom;
+    const { scaleX } = leafer.zoomLayer.__, { min: min2, max: max2 } = leafer.config.zoom;
     let { scale } = e;
-    if (scale * Math.abs(scaleX) < min)
-      scale = min / scaleX;
-    else if (scale * Math.abs(scaleX) > max)
-      scale = max / scaleX;
+    if (scale * Math.abs(scaleX) < min2)
+      scale = min2 / scaleX;
+    else if (scale * Math.abs(scaleX) > max2)
+      scale = max2 / scaleX;
     if (scale !== 1)
       LeafHelper.zoomOfWorld(leafer.zoomLayer, e, scale);
   }));
@@ -10082,8 +10097,8 @@ var WheelEventHelper = {
     }
     if (zoom) {
       zoomSpeed = MathHelper.within(zoomSpeed, 0, 1);
-      const min = e.deltaY ? config.delta.y : config.delta.x;
-      scale = 1 - delta / (min * 25 * (1 - zoomSpeed) + 10);
+      const min2 = e.deltaY ? config.delta.y : config.delta.x;
+      scale = 1 - delta / (min2 * 25 * (1 - zoomSpeed) + 10);
       if (scale < 0.5)
         scale = 0.5;
       if (scale >= 1.5)
@@ -10633,6 +10648,15 @@ var fillx = function(x1) {
   };
   fillContainer.push(f);
 };
+var updatePosition = function(param) {
+  dragonPositionState.x = dragonPositionState.x + floor_int(dragonPositionState.vx) | 0;
+  dragonPositionState.y = dragonPositionState.y + floor_int(dragonPositionState.vy) | 0;
+  dragonPositionState.vx = dragonPositionState.vx - 0.1;
+  if (dragonPositionState.x < 10) {
+    dragonPositionState.isStop = true;
+    return;
+  }
+};
 var rectUpdate = function(param) {
   if (flagTimeUp.contents === true) {
     flagTimeUp.contents = false;
@@ -10641,8 +10665,10 @@ var rectUpdate = function(param) {
     rectCurrent.fill = fill2;
     console.log("run update");
   }
-  if (flagMove.contents === true) {
-    rectCurrent.x = rectCurrent.x + 1 | 0;
+  if (dragonPositionState.isStop === false) {
+    updatePosition(undefined);
+    rectCurrent.x = dragonPositionState.x;
+    rectCurrent.y = dragonPositionState.y;
     return;
   }
 };
@@ -10650,10 +10676,29 @@ var appname = function(param) {
   return "my name is dragon";
 };
 var moveDragon = function(param) {
-  flagMove.contents = true;
-  setTimeout(function(param2) {
-    flagMove.contents = false;
-  }, 4000);
+  dragonPositionState.x = 300;
+  dragonPositionState.y = 10;
+  dragonPositionState.vy = 1;
+  dragonPositionState.vx = 5;
+  dragonPositionState.isStop = false;
+};
+var moveDragon2 = function(param) {
+  dragonPositionState.vy = 0;
+  dragonPositionState.vx = 6;
+  dragonPositionState.isStop = false;
+};
+var moveDragon3 = function(param) {
+  dragonPositionState.vy = -0.1;
+  dragonPositionState.vx = 4;
+  dragonPositionState.isStop = false;
+};
+var moveDragon4 = function(param) {
+  dragonPositionState.vy = 0.1;
+  dragonPositionState.vx = 9;
+  dragonPositionState.isStop = false;
+};
+var stopDragon = function(param) {
+  dragonPositionState.isStop = true;
 };
 var leafer = new Leafer({
   view: window,
@@ -10688,17 +10733,45 @@ var flag = {
 var flagTimeUp = {
   contents: false
 };
-var flagMove = {
-  contents: false
-};
 setInterval(function(param) {
   flagTimeUp.contents = true;
   console.log("time up!");
 }, 200);
+var dragonPositionState = {
+  x: 100,
+  y: 100,
+  vx: 0,
+  vy: 0,
+  isStop: true
+};
 leafer.on_(AnimateEvent.FRAME, function(param) {
   rectUpdate(undefined);
 });
-moveDragon(undefined);
+var timeTable = [
+  {
+    time: 10,
+    do: moveDragon
+  },
+  {
+    time: 6000,
+    do: moveDragon2
+  },
+  {
+    time: 1e4,
+    do: moveDragon3
+  },
+  {
+    time: 12000,
+    do: moveDragon4
+  },
+  {
+    time: 18000,
+    do: stopDragon
+  }
+];
+timeTable.forEach(function(task) {
+  setTimeout(task.do, task.time);
+});
 
 // src/index.js
 console.log(appname());

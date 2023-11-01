@@ -24,3 +24,12 @@ let isRescript = switch me.name {
 }
 
 Js.log(isRescript)
+
+let teststatic= ()=>{
+  let local =ref(0)
+  local.contents = local.contents+100 
+  local.contents;
+}
+
+Js.log(teststatic());
+Js.log(teststatic());

@@ -4,7 +4,7 @@ type leaferConfig={
     height?: int,
 }
 type leaferHandle={}
-type cordinate={x: int, y : int }
+type cordinate={mutable x: int, mutable y : int }
 type fillConfig={
    @as("type") type_: string,
     url: string,
@@ -75,11 +75,29 @@ add(leafer,rectCurrent);
 
 let flag = ref(0); // which config of fillContainer is using
 let flagTimeUp = ref(false);
-let flagMove = ref(false);
 
 let rectTimeDuration=200;
 let _= Js.Global.setInterval(() => {flagTimeUp.contents = true; Js.log("time up!")}, rectTimeDuration)
 
+
+
+type positionState={
+    mutable x: int, 
+    mutable y: int,
+    mutable vx: float,
+    mutable vy: float,
+    mutable isStop: bool,
+}
+let dragonPositionState={x:100, y :100, vx:0.0 , vy:0.0, isStop :true }
+
+let updatePosition=()=>{
+    dragonPositionState.x = dragonPositionState.x + Js.Math.floor_int(dragonPositionState.vx);
+    dragonPositionState.y = dragonPositionState.y +Js.Math.floor_int(dragonPositionState.vy);
+    dragonPositionState.vx = dragonPositionState.vx -. 0.1;
+    if (dragonPositionState.x < 10){
+        dragonPositionState.isStop = true
+    }
+}
 let rectUpdate = () => {
     if (flagTimeUp.contents == true ){
         flagTimeUp.contents = false
@@ -88,8 +106,10 @@ let rectUpdate = () => {
         rectCurrent.fill = fill;
         Js.log("run update")
     }
-    if (flagMove.contents == true){
-        rectCurrent.x = rectCurrent.x+1;        
+    if (dragonPositionState.isStop == false){
+        updatePosition();
+        rectCurrent.x = dragonPositionState.x;     
+        rectCurrent.y = dragonPositionState.y;    
     }
 }
 
@@ -99,11 +119,55 @@ let rectUpdate = () => {
     // rect.forceUpdate();
 })
 
-let appname = ()=>{ "my name is dragon"}
+let appname = ()=>{ "my name is dragon"};
 
-let moveDragon=()=>{
-    flagMove.contents = true;
-    let _ = Js.Global.setTimeout(()=>{flagMove.contents = false }, 4000);
+
+let moveDragon2=(time:int)=>{
+    dragonPositionState.vy= -1.0;
+    dragonPositionState.vx= 15.0;
+    dragonPositionState.isStop = false;
 }
 
-moveDragon()
+let moveDragon=()=>{
+    dragonPositionState.x= 300;
+    dragonPositionState.y= 10;
+    dragonPositionState.vy= 1.0;
+    dragonPositionState.vx= 5.0;
+    dragonPositionState.isStop = false;
+}
+
+let moveDragon2=()=>{ 
+    dragonPositionState.vy= 0.0;
+    dragonPositionState.vx= 6.0;
+    dragonPositionState.isStop = false;
+}
+let moveDragon3=()=>{ 
+    dragonPositionState.vy= -0.1;
+    dragonPositionState.vx= 4.0;
+    dragonPositionState.isStop = false;
+}
+
+let moveDragon4=()=>{ 
+    dragonPositionState.vy= 0.1;
+    dragonPositionState.vx= 9.0;
+    dragonPositionState.isStop = false;
+}
+
+let stopDragon=()=>{
+    dragonPositionState.isStop = true;
+}
+
+type task={
+    time: int,
+    do: unit => unit
+}
+
+let timeTable = [{time: 10, do: moveDragon}, 
+{time: 6000, do: moveDragon2}, 
+{time: 10000, do: moveDragon3},
+{time: 12000, do: moveDragon4}, 
+{time: 18000,do: stopDragon}]
+
+Js.Array2.forEach(timeTable, (task)=>{
+    let _ = Js.Global.setTimeout(task.do,task.time)
+})

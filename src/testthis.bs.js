@@ -19,6 +19,16 @@ isRescript = "ReScript" === "ReScript" ? true : false;
 
 console.log(isRescript);
 
+function teststatic(param) {
+  var local = 0;
+  local = local + 100 | 0;
+  return local;
+}
+
+console.log(teststatic(undefined));
+
+console.log(teststatic(undefined));
+
 var me = {
   age: 123,
   name: "ReScript"
@@ -29,5 +39,6 @@ export {
   a$1 as a,
   me ,
   isRescript ,
+  teststatic ,
 }
 /*  Not a pure module */
