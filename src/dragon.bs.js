@@ -102,13 +102,54 @@ function rectUpdate(param) {
   
 }
 
-leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
-        rectUpdate(undefined);
-      }));
-
 function appname(param) {
   return "my name is dragon";
 }
+
+var roadStateDate = {
+  isStart: false,
+  offset: 0,
+  speed: 1
+};
+
+var road = new LeaferUi.Rect({
+      x: 0,
+      y: 400,
+      width: 600,
+      height: 40,
+      fill: undefined,
+      draggable: true
+    });
+
+leafer.add(road);
+
+roadStateDate.isStart = true;
+
+function updateRoad(param) {
+  if (!roadStateDate.isStart) {
+    return ;
+  }
+  roadStateDate.offset = roadStateDate.offset + roadStateDate.speed | 0;
+  if (roadStateDate.offset > 600) {
+    roadStateDate.offset = 0;
+  }
+  var roadSoul_offset = {
+    x: -roadStateDate.offset | 0,
+    y: 60
+  };
+  var roadSoul = {
+    type: "image",
+    url: "./src/dragon.png",
+    mode: "clip",
+    offset: roadSoul_offset
+  };
+  road.fill = roadSoul;
+}
+
+leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
+        rectUpdate(undefined);
+        updateRoad(undefined);
+      }));
 
 function moveDragon(param) {
   dragonPositionState.x = 300;
@@ -169,6 +210,8 @@ timeTable.forEach(function (task) {
 
 var rectTimeDuration = 200;
 
+var roadRangeMax = 600;
+
 export {
   leafer ,
   x_offset ,
@@ -182,6 +225,10 @@ export {
   updatePosition ,
   rectUpdate ,
   appname ,
+  roadRangeMax ,
+  roadStateDate ,
+  road ,
+  updateRoad ,
   moveDragon ,
   moveDragon2 ,
   moveDragon3 ,

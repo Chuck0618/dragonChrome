@@ -10675,6 +10675,26 @@ var rectUpdate = function(param) {
 var appname = function(param) {
   return "my name is dragon";
 };
+var updateRoad = function(param) {
+  if (!roadStateDate.isStart) {
+    return;
+  }
+  roadStateDate.offset = roadStateDate.offset + roadStateDate.speed | 0;
+  if (roadStateDate.offset > 600) {
+    roadStateDate.offset = 0;
+  }
+  var roadSoul_offset = {
+    x: -roadStateDate.offset | 0,
+    y: 60
+  };
+  var roadSoul = {
+    type: "image",
+    url: "./src/dragon.png",
+    mode: "clip",
+    offset: roadSoul_offset
+  };
+  road.fill = roadSoul;
+};
 var moveDragon = function(param) {
   dragonPositionState.x = 300;
   dragonPositionState.y = 10;
@@ -10744,8 +10764,24 @@ var dragonPositionState = {
   vy: 0,
   isStop: true
 };
+var roadStateDate = {
+  isStart: false,
+  offset: 0,
+  speed: 1
+};
+var road = new Rect({
+  x: 0,
+  y: 400,
+  width: 600,
+  height: 40,
+  fill: undefined,
+  draggable: true
+});
+leafer.add(road);
+roadStateDate.isStart = true;
 leafer.on_(AnimateEvent.FRAME, function(param) {
   rectUpdate(undefined);
+  updateRoad(undefined);
 });
 var timeTable = [
   {

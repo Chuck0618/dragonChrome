@@ -113,13 +113,57 @@ let rectUpdate = () => {
     }
 }
 
- on_(leafer, event.frame_ , () => { 
+
+let appname = ()=>{ "my name is dragon"};
+
+type roadState={
+    mutable isStart: bool,
+    mutable offset : int ,
+    mutable speed : int
+}
+let roadRangeMax = 600;
+let roadStateDate={
+    isStart: false,
+    offset: 0 ,
+    speed: 1
+}
+
+let road = rect({
+    x:0,
+    y:400,
+    width: roadRangeMax,
+    height: 40,
+    fill: None,
+    draggable: true,
+}) 
+add(leafer, road);
+roadStateDate.isStart = true;
+
+let updateRoad = ()=>{
+    if(roadStateDate.isStart){
+        roadStateDate.offset = roadStateDate.offset+roadStateDate.speed;
+        if (roadStateDate.offset > roadRangeMax){
+            roadStateDate.offset = 0 ;
+        }
+        let roadSoul:fillConfig={
+            type_: "image",
+            url: "./src/dragon.png",
+            mode: "clip",
+            offset: { x: -roadStateDate.offset, y: 60 },
+        }
+        road.fill = Some(roadSoul);
+    }
+}
+// test
+
+
+
+on_(leafer, event.frame_ , () => { 
     rectUpdate();
+    updateRoad();
     // Js.log("test")
     // rect.forceUpdate();
 })
-
-let appname = ()=>{ "my name is dragon"};
 
 
 let moveDragon2=(time:int)=>{
