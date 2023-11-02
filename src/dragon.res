@@ -121,18 +121,18 @@ type roadState={
     mutable offset : int ,
     mutable speed : int
 }
-let roadRangeMax = 600;
+let roadRangeMax = 1200;
 let roadStateDate={
     isStart: false,
     offset: 0 ,
-    speed: 1
+    speed: 3
 }
 
 let road = rect({
     x:0,
-    y:400,
+    y:200,
     width: roadRangeMax,
-    height: 40,
+    height: 12,
     fill: None,
     draggable: true,
 }) 
@@ -149,7 +149,7 @@ let updateRoad = ()=>{
             type_: "image",
             url: "./src/dragon.png",
             mode: "clip",
-            offset: { x: -roadStateDate.offset, y: 60 },
+            offset: { x: -roadStateDate.offset, y: -53},
         }
         road.fill = Some(roadSoul);
     }

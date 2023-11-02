@@ -109,14 +109,14 @@ function appname(param) {
 var roadStateDate = {
   isStart: false,
   offset: 0,
-  speed: 1
+  speed: 3
 };
 
 var road = new LeaferUi.Rect({
       x: 0,
-      y: 400,
-      width: 600,
-      height: 40,
+      y: 200,
+      width: 1200,
+      height: 12,
       fill: undefined,
       draggable: true
     });
@@ -130,12 +130,12 @@ function updateRoad(param) {
     return ;
   }
   roadStateDate.offset = roadStateDate.offset + roadStateDate.speed | 0;
-  if (roadStateDate.offset > 600) {
+  if (roadStateDate.offset > 1200) {
     roadStateDate.offset = 0;
   }
   var roadSoul_offset = {
     x: -roadStateDate.offset | 0,
-    y: 60
+    y: -53
   };
   var roadSoul = {
     type: "image",
@@ -210,7 +210,7 @@ timeTable.forEach(function (task) {
 
 var rectTimeDuration = 200;
 
-var roadRangeMax = 600;
+var roadRangeMax = 1200;
 
 export {
   leafer ,
