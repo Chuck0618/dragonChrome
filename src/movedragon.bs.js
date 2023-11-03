@@ -2,6 +2,7 @@
 
 import * as Js_math from "rescript/lib/es6/js_math.js";
 import * as LeaferUi from "leafer-ui";
+import * as Caml_int32 from "rescript/lib/es6/caml_int32.js";
 
 function appname(param) {
   return "my name is dragon";
@@ -24,8 +25,7 @@ var x_offset = [
   894,
   938,
   982,
-  1026,
-  1070
+  1026
 ];
 
 var fillContainer = [];
@@ -50,75 +50,75 @@ fillContainer.forEach(function (x) {
       console.log(x);
     });
 
-var dragonState = {
-  y: 168,
-  vy: 0.0,
-  state: {
-    TAG: /* Stop */2,
-    _0: 5
-  },
-  ay: 0.20,
-  y0: 168,
-  x0: 20
-};
+var runIndex = [
+  2,
+  3
+];
+
+var jumpIndex = [
+  0,
+  1,
+  4
+];
 
 var dragonSoulRect = new LeaferUi.Rect({
-      x: dragonState.x0,
-      y: dragonState.y0,
+      x: 100,
+      y: 100,
       width: 39,
       height: 56,
       fill: fillContainer[0],
-      draggable: false
+      draggable: true
     });
 
 leafer.add(dragonSoulRect);
 
+var flag = {
+  contents: 0
+};
+
+var flagTimeUp = {
+  contents: false
+};
+
 setInterval((function (param) {
-        var ind = dragonState.state;
-        switch (ind.TAG | 0) {
-          case /* Run */0 :
-              var v = ind._0 === 2 ? 3 : 2;
-              dragonState.state = {
-                TAG: /* Run */0,
-                _0: v
-              };
-              return ;
-          case /* Jump */1 :
-          case /* Stop */2 :
-              return ;
-          
-        }
+        flagTimeUp.contents = true;
+        console.log("time up!");
       }), 200);
 
+var dragonPositionState = {
+  x: 100,
+  y: 100,
+  vx: 0.0,
+  vy: 0.0,
+  isStop: true
+};
+
 function updatePosition(param) {
-  dragonState.y = dragonState.y + Js_math.floor_int(dragonState.vy) | 0;
-  dragonState.vy = dragonState.vy + dragonState.ay;
-  if (dragonState.y >= dragonState.y0) {
-    dragonState.y = dragonState.y0;
-    dragonState.vy = 0.0;
-    dragonState.state = {
-      TAG: /* Run */0,
-      _0: 2
-    };
+  dragonPositionState.x = dragonPositionState.x + Js_math.floor_int(dragonPositionState.vx) | 0;
+  dragonPositionState.y = dragonPositionState.y + Js_math.floor_int(dragonPositionState.vy) | 0;
+  dragonPositionState.vx = dragonPositionState.vx - 0.1;
+  if (dragonPositionState.x < 10) {
+    dragonPositionState.isStop = true;
     return ;
   }
   
 }
 
-function updateDragon(param) {
-  var ind = dragonState.state;
-  switch (ind.TAG | 0) {
-    case /* Jump */1 :
-        updatePosition(undefined);
-        dragonSoulRect.y = dragonState.y;
-        dragonSoulRect.fill = fillContainer[ind._0];
-        return ;
-    case /* Run */0 :
-    case /* Stop */2 :
-        dragonSoulRect.fill = fillContainer[ind._0];
-        return ;
-    
+function rectUpdate(param) {
+  if (flagTimeUp.contents === true) {
+    flagTimeUp.contents = false;
+    flag.contents = Caml_int32.mod_(flag.contents + 1 | 0, fillContainer.length);
+    var fill = fillContainer[flag.contents];
+    dragonSoulRect.fill = fill;
+    console.log("run update");
   }
+  if (dragonPositionState.isStop === false) {
+    updatePosition(undefined);
+    dragonSoulRect.x = dragonPositionState.x;
+    dragonSoulRect.y = dragonPositionState.y;
+    return ;
+  }
+  
 }
 
 var roadStateDate = {
@@ -182,38 +182,8 @@ function updateRoad(param) {
 }
 
 leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
-        updateDragon(undefined);
+        rectUpdate(undefined);
         updateRoad(undefined);
-      }));
-
-function jumpTask(param) {
-  dragonState.vy = -6.0;
-  dragonState.state = {
-    TAG: /* Jump */1,
-    _0: 0
-  };
-  console.log("Time up!");
-}
-
-function captureCommand(param) {
-  var match = dragonState.state;
-  switch (match.TAG | 0) {
-    case /* Run */0 :
-        return jumpTask(undefined);
-    case /* Jump */1 :
-        return ;
-    case /* Stop */2 :
-        dragonState.state = {
-          TAG: /* Run */0,
-          _0: 2
-        };
-        return ;
-    
-  }
-}
-
-leafer.on_(LeaferUi.PointerEvent.DOWN, (function (param) {
-        captureCommand(undefined);
       }));
 
 var rectTimeDuration = 200;
@@ -227,18 +197,20 @@ export {
   x_offset ,
   fillContainer ,
   fillx ,
-  dragonState ,
+  runIndex ,
+  jumpIndex ,
   dragonSoulRect ,
+  flag ,
+  flagTimeUp ,
   rectTimeDuration ,
+  dragonPositionState ,
   updatePosition ,
-  updateDragon ,
+  rectUpdate ,
   roadRangeMax ,
   roadStateDate ,
   roadSoul ,
   road_01 ,
   road_02 ,
   updateRoad ,
-  jumpTask ,
-  captureCommand ,
 }
 /* leaferJsConfig Not a pure module */

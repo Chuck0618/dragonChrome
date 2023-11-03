@@ -28,15 +28,13 @@ type rectConfig={
 type rectHandle=rectConfig;
 
 type eventHandle={@as("FRAME") frame_: string}
-type pointerEvent = {@as("DOWN") down_: string}
+
 @new @module("leafer-ui") external 
 leaferJS: leaferConfig => leaferHandle = "Leafer"
 @new @module("leafer-ui") external 
 rect: rectConfig => rectHandle = "Rect" 
 @val @module("leafer-ui") external 
 event:eventHandle = "AnimateEvent";
-@val @module("leafer-ui") external 
-pointerEvent:pointerEvent = "PointerEvent"
 
 @send external on_:(leaferHandle, string, (unit)=>unit) => unit = "on_"
 @send external 
@@ -50,7 +48,7 @@ height: 400,
 
 let leafer = leaferJS(leaferJsConfig)
 // offset in soul png dragon.png
-let x_offset:array<int> =[850,850+44,850+44*2,850+44*3,850+44*4,850+44*5];
+let x_offset:array<int> =[850,850+44,850+44*2,850+44*3,850+44*4];
 let fillContainer:array<fillConfig>=[]
 
 let fillx=(x1:int) =>{
@@ -66,90 +64,62 @@ let fillx=(x1:int) =>{
 Js.Array2.forEach(x_offset, x=>fillx(x))
 Js.Array2.forEach(fillContainer, x=>Js.log(x));
 
-// let runIndex = [2,3];
-// let jumpIndex = [0,1,4];
-// let stopIndex = [4,5];
+let runIndex = [2,3];
+let jumpIndex = [0,1,4];
 
-type doing = 
-| Run(int)
-| Jump(int)
-| Stop(int)
+// test event.frame_ 
+// Js.log(event.frame_);
 
-
-type dragonStates={
-    mutable y: int,
-    mutable vy: float,
-    mutable state: doing,
-        ay: float,
-        y0: int,
-        x0: int,
-}
-let dragonState={x0:20, y0:168, y:168, vy:0.0, ay:0.20, state:Stop(5) }
-
+// rect object 
 let dragonSoulRect=rect({
-    x: dragonState.x0,
-    y: dragonState.y0,
+    x: 100,
+    y: 100,
     width: 39,
     height: 56,
     fill:  fillContainer[0],
-    draggable: false,
+    draggable: true,
 })
 // add rectCurrent to leafer 
 add(leafer,dragonSoulRect);
 
+let flag = ref(0); // which config of fillContainer is using
+let flagTimeUp = ref(false);
 
-
-//which config of fillContainer is using
- 
 let rectTimeDuration=200;
-let _= Js.Global.setInterval(() => {
-    switch dragonState.state{
-        | Run(ind) => {
-            let v = (ind == 2 ? 3 : 2);
-            dragonState.state = Run(v);
-            ()
-            };
-        | _ => ()
-    }
-}, rectTimeDuration)
+let _= Js.Global.setInterval(() => {flagTimeUp.contents = true; Js.log("time up!")}, rectTimeDuration)
+
+
+
+type positionState={
+    mutable x: int, 
+    mutable y: int,
+    mutable vx: float,
+    mutable vy: float,
+    mutable isStop: bool,
+}
+let dragonPositionState={x:100, y :100, vx:0.0 , vy:0.0, isStop :true }
 
 let updatePosition=()=>{
-    dragonState.y = dragonState.y +Js.Math.floor_int(dragonState.vy); 
-    dragonState.vy = dragonState.vy +. dragonState.ay;
-    if (dragonState.y >= dragonState.y0 ){
-        dragonState.y = dragonState.y0
-        dragonState.vy =0.0 ;
-        dragonState.state = Run(2);
+    dragonPositionState.x = dragonPositionState.x + Js.Math.floor_int(dragonPositionState.vx);
+    dragonPositionState.y = dragonPositionState.y +Js.Math.floor_int(dragonPositionState.vy);
+    dragonPositionState.vx = dragonPositionState.vx -. 0.1;
+    if (dragonPositionState.x < 10){
+        dragonPositionState.isStop = true
     }
 }
-
-let updateDragon = () => {
-    switch(dragonState.state){
-    | Run(ind) =>{
-       dragonSoulRect.fill=fillContainer[ind];
+let rectUpdate = () => {
+    if (flagTimeUp.contents == true ){
+        flagTimeUp.contents = false
+        flag.contents = mod( (flag.contents+1) , Js.Array2.length(fillContainer));
+        let fill = fillContainer[flag.contents]; 
+        dragonSoulRect.fill = fill;
+        Js.log("run update")
     }
-    | Stop(ind) =>{
-       dragonSoulRect.fill=fillContainer[ind];
-    }
-    | Jump(ind) =>{
+    if (dragonPositionState.isStop == false){
         updatePosition();
-        dragonSoulRect.y = dragonState.y ; 
-       dragonSoulRect.fill=fillContainer[ind];
+        dragonSoulRect.x = dragonPositionState.x;     
+        dragonSoulRect.y = dragonPositionState.y;    
     }
-    }
-
-    // if (flagTimeUp.contents == true ){
-    //     flagTimeUp.contents = false
-    //     flag.contents = mod( (flag.contents+1) , Js.Array2.length(fillContainer));
-    //     let fill = fillContainer[flag.contents]; 
-    //     dragonSoulRect.fill = fill;
-    //     Js.log("run update")
-    // }
-    // if (dragonState.isStop == false){
-    //     updatePosition();
-    //     dragonSoulRect.x = dragonPositionState.x;     
-    //     dragonSoulRect.y = dragonPositionState.y;    
-    // }
 }
 
 
@@ -219,39 +189,12 @@ let updateRoad = ()=>{
 
 
 on_(leafer, event.frame_ , () => { 
-    updateDragon();
+    rectUpdate();
     updateRoad();
     // Js.log("test")
     // rect.forceUpdate();
 })
 
-let jumpTask =()=>{
-    dragonState.vy = -6.0;
-    dragonState.state = Jump(0);
-    let _ = Js.log("Time up!")
-}
-
-let captureCommand = ()=>{
-    switch dragonState.state{
-        | Run(_) => {jumpTask()}
-        | Stop(_) => {
-            dragonState.state =Run(2);
-        }
-        | Jump(_) =>();
-    } 
-}
-
-on_(leafer, pointerEvent.down_, ()  =>{
-   captureCommand();
-})
-
-
-
-// dragonState.state = Run(2);
-
-// let _ = Js.Global.setTimeout(
-//     jumpTask,
-//     15000);
 
 // let moveDragon2=(time:int)=>{
 //     dragonPositionState.vy= -1.0;

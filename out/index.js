@@ -10623,18 +10623,10 @@ Object.assign(ColorConvert, ColorConvert2);
 Object.assign(Export, Export2);
 useCanvas();
 
-// node_modules/rescript/lib/es6/caml_int32.js
-var mod_ = function(x, y) {
-  if (y === 0) {
-    throw {
-      RE_EXN_ID: "Division_by_zero",
-      Error: new Error
-    };
-  }
-  return x % y;
-};
-
 // src/dragon.bs.js
+var appname = function(param) {
+  return "my name is dragon";
+};
 var fillx = function(x1) {
   var f_offset = {
     x: -x1 | 0,
@@ -10649,164 +10641,167 @@ var fillx = function(x1) {
   fillContainer.push(f);
 };
 var updatePosition = function(param) {
-  dragonPositionState.x = dragonPositionState.x + floor_int(dragonPositionState.vx) | 0;
-  dragonPositionState.y = dragonPositionState.y + floor_int(dragonPositionState.vy) | 0;
-  dragonPositionState.vx = dragonPositionState.vx - 0.1;
-  if (dragonPositionState.x < 10) {
-    dragonPositionState.isStop = true;
+  dragonState.y = dragonState.y + floor_int(dragonState.vy) | 0;
+  dragonState.vy = dragonState.vy + dragonState.ay;
+  if (dragonState.y >= dragonState.y0) {
+    dragonState.y = dragonState.y0;
+    dragonState.vy = 0;
+    dragonState.state = {
+      TAG: 0,
+      _0: 2
+    };
     return;
   }
 };
-var rectUpdate = function(param) {
-  if (flagTimeUp.contents === true) {
-    flagTimeUp.contents = false;
-    flag.contents = mod_(flag.contents + 1 | 0, fillContainer.length);
-    var fill2 = fillContainer[flag.contents];
-    rectCurrent.fill = fill2;
-    console.log("run update");
+var updateDragon = function(param) {
+  var ind = dragonState.state;
+  switch (ind.TAG | 0) {
+    case 1:
+      updatePosition(undefined);
+      dragonSoulRect.y = dragonState.y;
+      dragonSoulRect.fill = fillContainer[ind._0];
+      return;
+    case 0:
+    case 2:
+      dragonSoulRect.fill = fillContainer[ind._0];
+      return;
   }
-  if (dragonPositionState.isStop === false) {
-    updatePosition(undefined);
-    rectCurrent.x = dragonPositionState.x;
-    rectCurrent.y = dragonPositionState.y;
-    return;
-  }
-};
-var appname = function(param) {
-  return "my name is dragon";
 };
 var updateRoad = function(param) {
-  if (!roadStateDate.isStart) {
+  if (roadStateDate.isStart) {
+    roadStateDate.x1 = roadStateDate.x1 + roadStateDate.vx | 0;
+    roadStateDate.x2 = roadStateDate.x2 + roadStateDate.vx | 0;
+    if (roadStateDate.x1 < -1200) {
+      roadStateDate.x1 = roadStateDate.x2 + 1200 | 0;
+    }
+    if (roadStateDate.x2 < -1200) {
+      roadStateDate.x2 = roadStateDate.x1 + 1200 | 0;
+    }
+    road_01.x = roadStateDate.x1;
+    road_02.x = roadStateDate.x2;
     return;
   }
-  roadStateDate.offset = roadStateDate.offset + roadStateDate.speed | 0;
-  if (roadStateDate.offset > 1200) {
-    roadStateDate.offset = 0;
+};
+var jumpTask = function(param) {
+  dragonState.vy = -6;
+  dragonState.state = {
+    TAG: 1,
+    _0: 0
+  };
+  console.log("Time up!");
+};
+var captureCommand = function(param) {
+  var match = dragonState.state;
+  switch (match.TAG | 0) {
+    case 0:
+      return jumpTask(undefined);
+    case 1:
+      return;
+    case 2:
+      dragonState.state = {
+        TAG: 0,
+        _0: 2
+      };
+      return;
   }
-  var roadSoul_offset = {
-    x: -roadStateDate.offset | 0,
-    y: -53
-  };
-  var roadSoul = {
-    type: "image",
-    url: "./src/dragon.png",
-    mode: "clip",
-    offset: roadSoul_offset
-  };
-  road.fill = roadSoul;
 };
-var moveDragon = function(param) {
-  dragonPositionState.x = 300;
-  dragonPositionState.y = 10;
-  dragonPositionState.vy = 1;
-  dragonPositionState.vx = 5;
-  dragonPositionState.isStop = false;
-};
-var moveDragon2 = function(param) {
-  dragonPositionState.vy = 0;
-  dragonPositionState.vx = 6;
-  dragonPositionState.isStop = false;
-};
-var moveDragon3 = function(param) {
-  dragonPositionState.vy = -0.1;
-  dragonPositionState.vx = 4;
-  dragonPositionState.isStop = false;
-};
-var moveDragon4 = function(param) {
-  dragonPositionState.vy = 0.1;
-  dragonPositionState.vx = 9;
-  dragonPositionState.isStop = false;
-};
-var stopDragon = function(param) {
-  dragonPositionState.isStop = true;
-};
-var leafer = new Leafer({
+var leaferJsConfig_width = 600;
+var leaferJsConfig_height = 400;
+var leaferJsConfig = {
   view: window,
-  width: 600,
-  height: 400
-});
+  width: leaferJsConfig_width,
+  height: leaferJsConfig_height
+};
+var leafer = new Leafer(leaferJsConfig);
 var x_offset = [
   850,
   894,
   938,
   982,
-  1026
+  1026,
+  1070
 ];
 var fillContainer = [];
 x_offset.forEach(fillx);
 fillContainer.forEach(function(x) {
   console.log(x);
 });
-console.log(AnimateEvent.FRAME);
-var rectCurrent = new Rect({
-  x: 100,
-  y: 100,
+var dragonState = {
+  y: 168,
+  vy: 0,
+  state: {
+    TAG: 2,
+    _0: 5
+  },
+  ay: 0.2,
+  y0: 168,
+  x0: 20
+};
+var dragonSoulRect = new Rect({
+  x: dragonState.x0,
+  y: dragonState.y0,
   width: 39,
   height: 56,
   fill: fillContainer[0],
-  draggable: true
+  draggable: false
 });
-leafer.add(rectCurrent);
-var flag = {
-  contents: 0
-};
-var flagTimeUp = {
-  contents: false
-};
+leafer.add(dragonSoulRect);
 setInterval(function(param) {
-  flagTimeUp.contents = true;
-  console.log("time up!");
+  var ind = dragonState.state;
+  switch (ind.TAG | 0) {
+    case 0:
+      var v2 = ind._0 === 2 ? 3 : 2;
+      dragonState.state = {
+        TAG: 0,
+        _0: v2
+      };
+      return;
+    case 1:
+    case 2:
+      return;
+  }
 }, 200);
-var dragonPositionState = {
-  x: 100,
-  y: 100,
-  vx: 0,
-  vy: 0,
-  isStop: true
-};
 var roadStateDate = {
   isStart: false,
-  offset: 0,
-  speed: 3
+  x1: 0,
+  x2: 1200,
+  vx: -3
 };
-var road = new Rect({
+var roadSoul_offset = {
+  x: 0,
+  y: -53
+};
+var roadSoul = {
+  type: "image",
+  url: "./src/dragon.png",
+  mode: "clip",
+  offset: roadSoul_offset
+};
+var road_01 = new Rect({
   x: 0,
   y: 200,
   width: 1200,
   height: 12,
-  fill: undefined,
-  draggable: true
+  fill: roadSoul,
+  draggable: false
 });
-leafer.add(road);
+var road_02 = new Rect({
+  x: 1200,
+  y: 200,
+  width: 1200,
+  height: 12,
+  fill: roadSoul,
+  draggable: false
+});
+leafer.add(road_01);
+leafer.add(road_02);
 roadStateDate.isStart = true;
 leafer.on_(AnimateEvent.FRAME, function(param) {
-  rectUpdate(undefined);
+  updateDragon(undefined);
   updateRoad(undefined);
 });
-var timeTable = [
-  {
-    time: 10,
-    do: moveDragon
-  },
-  {
-    time: 6000,
-    do: moveDragon2
-  },
-  {
-    time: 1e4,
-    do: moveDragon3
-  },
-  {
-    time: 12000,
-    do: moveDragon4
-  },
-  {
-    time: 18000,
-    do: stopDragon
-  }
-];
-timeTable.forEach(function(task) {
-  setTimeout(task.do, task.time);
+leafer.on_(PointerEvent.DOWN, function(param) {
+  captureCommand(undefined);
 });
 
 // src/index.js
