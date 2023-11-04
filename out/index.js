@@ -12,6 +12,9 @@ var floor_int = function(f) {
     return Math.floor(f);
   }
 };
+var random_int = function(min2, max2) {
+  return floor_int(Math.random() * (max2 - min2 | 0)) + min2 | 0;
+};
 
 // node_modules/@leafer/core/dist/core.esm.js
 var get = function() {
@@ -10667,6 +10670,44 @@ var updateDragon = function(param) {
       return;
   }
 };
+var push = function(ct, cor) {
+  var f_offset = {
+    x: -cor.x | 0,
+    y: -cor.y | 0
+  };
+  var f = {
+    type: "image",
+    url: "./src/dragon.png",
+    mode: "clip",
+    offset: f_offset
+  };
+  ct.push(f);
+};
+var updateTree = function(param) {
+  if (!obsStateDate.isStart) {
+    return;
+  }
+  obsStateDate.x1 = obsStateDate.x1 + floor_int(obsStateDate.vx) | 0;
+  obsStateDate.x2 = obsStateDate.x2 + floor_int(obsStateDate.vx) | 0;
+  if (obsStateDate.x1 < -10) {
+    var w = 600;
+    var width = w !== undefined ? w : 600;
+    obsStateDate.x1 = width + random_int(0, 500) | 0;
+    if (obsStateDate.x1 > (obsStateDate.x2 - 10 | 0) && obsStateDate.x1 < (obsStateDate.x2 + 30 | 0)) {
+      obsStateDate.x1 = (obsStateDate.x2 + 30 | 0) + random_int(0, 500) | 0;
+    }
+  }
+  if (obsStateDate.x2 < -10) {
+    var w$1 = 600;
+    var width$1 = w$1 !== undefined ? w$1 : 600;
+    obsStateDate.x2 = width$1 + random_int(0, 500) | 0;
+    if (obsStateDate.x2 > (obsStateDate.x1 - 10 | 0) && obsStateDate.x2 < (obsStateDate.x1 + 30 | 0)) {
+      obsStateDate.x2 = (obsStateDate.x1 + 30 | 0) + random_int(0, 500) | 0;
+    }
+  }
+  treeRectSmall.x = obsStateDate.x1;
+  treeRectLarge.x = obsStateDate.x2;
+};
 var updateRoad = function(param) {
   if (roadStateDate.isStart) {
     roadStateDate.x1 = roadStateDate.x1 + roadStateDate.vx | 0;
@@ -10734,7 +10775,7 @@ var dragonState = {
     _0: 5
   },
   ay: 0.2,
-  y0: 168,
+  y0: 166,
   x0: 20
 };
 var dragonSoulRect = new Rect({
@@ -10761,6 +10802,62 @@ setInterval(function(param) {
       return;
   }
 }, 200);
+var offsetObstructSmall = [
+  {
+    x: 262,
+    y: 2
+  },
+  {
+    x: 292,
+    y: 2
+  }
+];
+var offsetObstructLarge = [
+  {
+    x: 331,
+    y: 2
+  },
+  {
+    x: 351,
+    y: 2
+  }
+];
+var fillContainerTreeSmall = [];
+var fillContainerTreeLarge = [];
+offsetObstructSmall.forEach(function(cor) {
+  push(fillContainerTreeSmall, cor);
+});
+offsetObstructLarge.forEach(function(param) {
+  return push(fillContainerTreeLarge, param);
+});
+var obsStateDate = {
+  x1: 100,
+  y1: 182,
+  x2: 400,
+  y2: 168,
+  isStart: false,
+  vx: 0
+};
+var treeRectSmall = new Rect({
+  x: obsStateDate.x1,
+  y: obsStateDate.y1,
+  width: 18,
+  height: 40,
+  fill: fillContainerTreeSmall[0],
+  draggable: false
+});
+var treeRectLarge = new Rect({
+  x: obsStateDate.x2,
+  y: obsStateDate.y2,
+  width: 25,
+  height: 54,
+  fill: fillContainerTreeLarge[0],
+  draggable: false
+});
+leafer.add(treeRectSmall);
+leafer.add(treeRectLarge);
+obsStateDate.vx = -3;
+obsStateDate.isStart = true;
 var roadStateDate = {
   isStart: false,
   x1: 0,
@@ -10799,6 +10896,7 @@ roadStateDate.isStart = true;
 leafer.on_(AnimateEvent.FRAME, function(param) {
   updateDragon(undefined);
   updateRoad(undefined);
+  updateTree(undefined);
 });
 leafer.on_(PointerEvent.DOWN, function(param) {
   captureCommand(undefined);

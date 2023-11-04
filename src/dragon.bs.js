@@ -30,6 +30,18 @@ var x_offset = [
 
 var fillContainer = [];
 
+var fillDefault_offset = {
+  x: 0,
+  y: 0
+};
+
+var fillDefault = {
+  type: "image",
+  url: "./src/dragon.png",
+  mode: "clip",
+  offset: fillDefault_offset
+};
+
 function fillx(x1) {
   var f_offset = {
     x: -x1 | 0,
@@ -58,7 +70,7 @@ var dragonState = {
     _0: 5
   },
   ay: 0.20,
-  y0: 168,
+  y0: 166,
   x0: 20
 };
 
@@ -119,6 +131,117 @@ function updateDragon(param) {
         return ;
     
   }
+}
+
+var offsetObstructSmall = [
+  {
+    x: 262,
+    y: 2
+  },
+  {
+    x: 292,
+    y: 2
+  }
+];
+
+var offsetObstructLarge = [
+  {
+    x: 331,
+    y: 2
+  },
+  {
+    x: 351,
+    y: 2
+  }
+];
+
+var fillContainerTreeSmall = [];
+
+var fillContainerTreeLarge = [];
+
+function push(ct, cor) {
+  var f_offset = {
+    x: -cor.x | 0,
+    y: -cor.y | 0
+  };
+  var f = {
+    type: "image",
+    url: "./src/dragon.png",
+    mode: "clip",
+    offset: f_offset
+  };
+  ct.push(f);
+}
+
+offsetObstructSmall.forEach(function (cor) {
+      push(fillContainerTreeSmall, cor);
+    });
+
+offsetObstructLarge.forEach(function (param) {
+      return push(fillContainerTreeLarge, param);
+    });
+
+var obsStateDate = {
+  x1: 100,
+  y1: 182,
+  x2: 400,
+  y2: 168,
+  isStart: false,
+  vx: 0.0
+};
+
+var treeRectSmall = new LeaferUi.Rect({
+      x: obsStateDate.x1,
+      y: obsStateDate.y1,
+      width: 18,
+      height: 40,
+      fill: fillContainerTreeSmall[0],
+      draggable: false
+    });
+
+var treeRectLarge = new LeaferUi.Rect({
+      x: obsStateDate.x2,
+      y: obsStateDate.y2,
+      width: 25,
+      height: 54,
+      fill: fillContainerTreeLarge[0],
+      draggable: false
+    });
+
+leafer.add(treeRectSmall);
+
+leafer.add(treeRectLarge);
+
+obsStateDate.vx = -3.0;
+
+obsStateDate.isStart = true;
+
+function updateTree(param) {
+  if (!obsStateDate.isStart) {
+    return ;
+  }
+  obsStateDate.x1 = obsStateDate.x1 + Js_math.floor_int(obsStateDate.vx) | 0;
+  obsStateDate.x2 = obsStateDate.x2 + Js_math.floor_int(obsStateDate.vx) | 0;
+  if (obsStateDate.x1 < -10) {
+    var w = 600;
+    var width = w !== undefined ? w : 600;
+    obsStateDate.x1 = width + Js_math.random_int(0, 500) | 0;
+    if (obsStateDate.x1 > (obsStateDate.x2 - 10 | 0) && obsStateDate.x1 < (obsStateDate.x2 + 30 | 0)) {
+      obsStateDate.x1 = (obsStateDate.x2 + 30 | 0) + Js_math.random_int(0, 500) | 0;
+    }
+    
+  }
+  if (obsStateDate.x2 < -10) {
+    var w$1 = 600;
+    var width$1 = w$1 !== undefined ? w$1 : 600;
+    obsStateDate.x2 = width$1 + Js_math.random_int(0, 500) | 0;
+    if (obsStateDate.x2 > (obsStateDate.x1 - 10 | 0) && obsStateDate.x2 < (obsStateDate.x1 + 30 | 0)) {
+      obsStateDate.x2 = (obsStateDate.x1 + 30 | 0) + Js_math.random_int(0, 500) | 0;
+    }
+    
+  }
+  treeRectSmall.x = obsStateDate.x1;
+  treeRectLarge.x = obsStateDate.x2;
 }
 
 var roadStateDate = {
@@ -184,6 +307,7 @@ function updateRoad(param) {
 leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
         updateDragon(undefined);
         updateRoad(undefined);
+        updateTree(undefined);
       }));
 
 function jumpTask(param) {
@@ -226,12 +350,22 @@ export {
   leafer ,
   x_offset ,
   fillContainer ,
+  fillDefault ,
   fillx ,
   dragonState ,
   dragonSoulRect ,
   rectTimeDuration ,
   updatePosition ,
   updateDragon ,
+  offsetObstructSmall ,
+  offsetObstructLarge ,
+  fillContainerTreeSmall ,
+  fillContainerTreeLarge ,
+  push ,
+  obsStateDate ,
+  treeRectSmall ,
+  treeRectLarge ,
+  updateTree ,
   roadRangeMax ,
   roadStateDate ,
   roadSoul ,

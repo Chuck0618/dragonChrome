@@ -53,11 +53,16 @@ let leafer = leaferJS(leaferJsConfig)
 let x_offset:array<int> =[850,850+44,850+44*2,850+44*3,850+44*4,850+44*5];
 let fillContainer:array<fillConfig>=[]
 
-let fillx=(x1:int) =>{
-    let f:fillConfig={
+let fillDefault:fillConfig={
     type_: "image",
     url: "./src/dragon.png",
     mode: "clip",
+    offset: { x:0, y: 0},
+    }
+
+let fillx=(x1:int) =>{
+    let f:fillConfig={
+    ...fillDefault,
     offset: { x: -x1, y: 2 },
     }
     let _ = Js.Array2.push(fillContainer, f);
@@ -84,7 +89,7 @@ type dragonStates={
         y0: int,
         x0: int,
 }
-let dragonState={x0:20, y0:168, y:168, vy:0.0, ay:0.20, state:Stop(5) }
+let dragonState={x0:20, y0:166, y:168, vy:0.0, ay:0.20, state:Stop(5) }
 
 let dragonSoulRect=rect({
     x: dragonState.x0,
@@ -97,9 +102,6 @@ let dragonSoulRect=rect({
 // add rectCurrent to leafer 
 add(leafer,dragonSoulRect);
 
-
-
-//which config of fillContainer is using
  
 let rectTimeDuration=200;
 let _= Js.Global.setInterval(() => {
@@ -137,23 +139,123 @@ let updateDragon = () => {
        dragonSoulRect.fill=fillContainer[ind];
     }
     }
-
-    // if (flagTimeUp.contents == true ){
-    //     flagTimeUp.contents = false
-    //     flag.contents = mod( (flag.contents+1) , Js.Array2.length(fillContainer));
-    //     let fill = fillContainer[flag.contents]; 
-    //     dragonSoulRect.fill = fill;
-    //     Js.log("run update")
-    // }
-    // if (dragonState.isStop == false){
-    //     updatePosition();
-    //     dragonSoulRect.x = dragonPositionState.x;     
-    //     dragonSoulRect.y = dragonPositionState.y;    
-    // }
+ 
 }
 
 
 
+
+
+//  Obstructions 
+//
+// obsStateDate 控制 tree 在游戏中的行为
+
+
+
+// type size={
+//     width : int, 
+//     height : int,
+// }
+// let offsetObstructSmallSize:size={
+//     width : 100,
+//     height: 100,
+// }
+
+// 载入游戏静态数据
+let offsetObstructSmall:array<cordinate>=[
+    { x: 262, y: 2},
+    { x: (272+20), y: 2},
+]
+let offsetObstructLarge:array<cordinate>=[
+    { x: 331, y: 2},
+    { x: (331+20), y: 2},
+]
+let fillContainerTreeSmall:array<fillConfig>=[];
+let fillContainerTreeLarge:array<fillConfig>=[];
+
+let push= (ct:array<fillConfig>, cor:cordinate)=>{
+    let f: fillConfig = {
+   ...fillDefault,
+    offset: { x: -cor.x, y: -cor.y},
+    }
+    let _ = Js.Array2.push(ct, f);
+}
+Js.Array2.forEach( offsetObstructSmall, (cor)=>{
+    push(fillContainerTreeSmall, cor);
+});
+
+Js.Array2.forEach( offsetObstructLarge,push(fillContainerTreeLarge));
+
+
+
+type obsState= {
+    mutable x1: int,
+    y1: int,
+    mutable x2: int,
+    y2: int,
+    mutable isStart: bool,
+    mutable vx: float,
+}
+let obsStateDate :obsState= {
+    x1: 100,
+    y1: 182,
+    x2: 400,
+    y2: 168,
+    isStart: false,
+    vx: 0.0,
+} 
+
+let treeRectSmall = rect({
+    x: obsStateDate.x1,
+    y: obsStateDate.y1,
+    width : 18,
+    height: 40,
+    fill: fillContainerTreeSmall[0],
+    draggable : false,
+})
+
+let treeRectLarge = rect({
+    x: obsStateDate.x2,
+    y: obsStateDate.y2,
+    width : 25,
+    height: 54,
+    fill: fillContainerTreeLarge[0],
+    draggable : false,
+})
+
+add(leafer, treeRectSmall);
+add(leafer, treeRectLarge);
+obsStateDate.vx = -3.0 ;
+obsStateDate.isStart = true; 
+
+let updateTree = ()=>{
+    if(obsStateDate.isStart){
+        obsStateDate.x1 = obsStateDate.x1 + Js.Math.floor_int(obsStateDate.vx);
+        obsStateDate.x2 = obsStateDate.x2 + Js.Math.floor_int(obsStateDate.vx);
+        if (obsStateDate.x1 < -10){
+            let width :int =switch leaferJsConfig.width{
+            | Some(w)=>w| _=>600};
+            obsStateDate.x1 = width+Js.Math.random_int(0,500);
+            if(obsStateDate.x1 > obsStateDate.x2 -10 && obsStateDate.x1 < obsStateDate.x2+30){
+                obsStateDate.x1 = obsStateDate.x2 + 30 +Js.Math.random_int(0,500); 
+            }
+        }
+        if (obsStateDate.x2 < -10){
+            let width :int =switch leaferJsConfig.width{
+            | Some(w)=>w| _=>600};
+            obsStateDate.x2 = width+Js.Math.random_int(0,500);
+            if(obsStateDate.x2 > obsStateDate.x1 -10 && obsStateDate.x2< obsStateDate.x1+30){
+                obsStateDate.x2 = obsStateDate.x1 + 30 +Js.Math.random_int(0,500); 
+            }
+        }
+        treeRectSmall.x = obsStateDate.x1;
+        treeRectLarge.x = obsStateDate.x2;
+    }
+}
+// For the road, withing the road01,road02
+//
+// roadStateDate 控制 road 在游戏中的行为
+//
 type roadState={
     mutable isStart: bool,
     mutable x1 : int ,
@@ -168,10 +270,9 @@ let roadStateDate={
     vx: -3
 }
 
+
 let roadSoul:fillConfig={
-    type_: "image",
-    url: "./src/dragon.png",
-    mode: "clip",
+    ...fillDefault,
     offset: { x: 0, y: -53},
 }
 
@@ -216,11 +317,12 @@ let updateRoad = ()=>{
 }
 // test
 
-
+//routine of the game 
 
 on_(leafer, event.frame_ , () => { 
     updateDragon();
     updateRoad();
+    updateTree();
     // Js.log("test")
     // rect.forceUpdate();
 })
@@ -246,59 +348,3 @@ on_(leafer, pointerEvent.down_, ()  =>{
 })
 
 
-
-// dragonState.state = Run(2);
-
-// let _ = Js.Global.setTimeout(
-//     jumpTask,
-//     15000);
-
-// let moveDragon2=(time:int)=>{
-//     dragonPositionState.vy= -1.0;
-//     dragonPositionState.vx= 15.0;
-//     dragonPositionState.isStop = false;
-// }
-
-// let moveDragon=()=>{
-//     dragonPositionState.x= 300;
-//     dragonPositionState.y= 10;
-//     dragonPositionState.vy= 1.0;
-//     dragonPositionState.vx= 5.0;
-//     dragonPositionState.isStop = false;
-// }
-
-// let moveDragon2=()=>{ 
-//     dragonPositionState.vy= 0.0;
-//     dragonPositionState.vx= 6.0;
-//     dragonPositionState.isStop = false;
-// }
-// let moveDragon3=()=>{ 
-//     dragonPositionState.vy= -0.1;
-//     dragonPositionState.vx= 4.0;
-//     dragonPositionState.isStop = false;
-// }
-
-// let moveDragon4=()=>{ 
-//     dragonPositionState.vy= 0.1;
-//     dragonPositionState.vx= 9.0;
-//     dragonPositionState.isStop = false;
-// }
-
-// let stopDragon=()=>{
-//     dragonPositionState.isStop = true;
-// }
-
-// type task={
-//     time: int,
-//     do: unit => unit
-// }
-
-// let timeTable = [{time: 10, do: moveDragon}, 
-// {time: 6000, do: moveDragon2}, 
-// {time: 10000, do: moveDragon3},
-// {time: 12000, do: moveDragon4}, 
-// {time: 18000,do: stopDragon}]
-
-// Js.Array2.forEach(timeTable, (task)=>{
-//     let _ = Js.Global.setTimeout(task.do,task.time)
-// })
