@@ -10626,6 +10626,34 @@ Object.assign(ColorConvert, ColorConvert2);
 Object.assign(Export, Export2);
 useCanvas();
 
+// node_modules/rescript/lib/es6/caml_option.js
+var some = function(x) {
+  if (x === undefined) {
+    return {
+      BS_PRIVATE_NESTED_SOME_NONE: 0
+    };
+  } else if (x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined) {
+    return {
+      BS_PRIVATE_NESTED_SOME_NONE: x.BS_PRIVATE_NESTED_SOME_NONE + 1 | 0
+    };
+  } else {
+    return x;
+  }
+};
+var valFromOption = function(x) {
+  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== undefined)) {
+    return x;
+  }
+  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
+  if (depth === 0) {
+    return;
+  } else {
+    return {
+      BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
+    };
+  }
+};
+
 // src/dragon.bs.js
 var appname = function(param) {
   return "my name is dragon";
@@ -10684,29 +10712,32 @@ var push = function(ct, cor) {
   ct.push(f);
 };
 var updateTree = function(param) {
-  if (!obsStateDate.isStart) {
+  if (!treeStateDate.isStart) {
     return;
   }
-  obsStateDate.x1 = obsStateDate.x1 + floor_int(obsStateDate.vx) | 0;
-  obsStateDate.x2 = obsStateDate.x2 + floor_int(obsStateDate.vx) | 0;
-  if (obsStateDate.x1 < -10) {
+  treeStateDate.x1 = treeStateDate.x1 + floor_int(treeStateDate.vx) | 0;
+  treeStateDate.x2 = treeStateDate.x2 + floor_int(treeStateDate.vx) | 0;
+  if (treeStateDate.x1 < -10) {
+    treeStateDate.passSmall = treeStateDate.passSmall + 1 | 0;
     var w = 600;
     var width = w !== undefined ? w : 600;
-    obsStateDate.x1 = width + random_int(0, 500) | 0;
-    if (obsStateDate.x1 > (obsStateDate.x2 - 10 | 0) && obsStateDate.x1 < (obsStateDate.x2 + 30 | 0)) {
-      obsStateDate.x1 = (obsStateDate.x2 + 30 | 0) + random_int(0, 500) | 0;
+    treeStateDate.x1 = width + random_int(0, 500) | 0;
+    if (treeStateDate.x1 > (treeStateDate.x2 - 10 | 0) && treeStateDate.x1 < (treeStateDate.x2 + 30 | 0)) {
+      treeStateDate.x1 = (treeStateDate.x2 + 30 | 0) + random_int(0, 500) | 0;
     }
   }
-  if (obsStateDate.x2 < -10) {
+  if (treeStateDate.x2 < -10) {
+    treeStateDate.passLarge = treeStateDate.passLarge + 1 | 0;
     var w$1 = 600;
     var width$1 = w$1 !== undefined ? w$1 : 600;
-    obsStateDate.x2 = width$1 + random_int(0, 500) | 0;
-    if (obsStateDate.x2 > (obsStateDate.x1 - 10 | 0) && obsStateDate.x2 < (obsStateDate.x1 + 30 | 0)) {
-      obsStateDate.x2 = (obsStateDate.x1 + 30 | 0) + random_int(0, 500) | 0;
+    treeStateDate.x2 = width$1 + random_int(0, 500) | 0;
+    if (treeStateDate.x2 > (treeStateDate.x1 - 10 | 0) && treeStateDate.x2 < (treeStateDate.x1 + 30 | 0)) {
+      treeStateDate.x2 = (treeStateDate.x1 + 30 | 0) + random_int(0, 500) | 0;
     }
   }
-  treeRectSmall.x = obsStateDate.x1;
-  treeRectLarge.x = obsStateDate.x2;
+  gameStateDate.scoreNow = Math.imul(treeStateDate.passLarge, 20) + Math.imul(treeStateDate.passSmall, 10) | 0;
+  treeRectSmall.x = treeStateDate.x1;
+  treeRectLarge.x = treeStateDate.x2;
 };
 var updateRoad = function(param) {
   if (roadStateDate.isStart) {
@@ -10721,6 +10752,48 @@ var updateRoad = function(param) {
     road_01.x = roadStateDate.x1;
     road_02.x = roadStateDate.x2;
     return;
+  }
+};
+var updateTextNow = function(param) {
+  textScoreNow.text = "\u5F53\u524D\u5F97\u5206\uFF1A" + gameStateDate.scoreNow.toString();
+};
+var updateTextMax = function(param) {
+  textScoreMax.text = "\u6700\u9AD8\u5F97\u5206\uFF1A" + gameStateDate.scoreMax.toString();
+};
+var testDead = function(param) {
+  var test1 = Math.abs(dragonState.x0 - treeStateDate.x1 | 0) < 18 && Math.abs(dragonState.y - treeStateDate.y1 | 0) < 30;
+  var test2 = Math.abs(dragonState.x0 - treeStateDate.x2 | 0) < 20 && Math.abs(dragonState.y - treeStateDate.y2 | 0) < 40;
+  if (test1) {
+    return true;
+  } else {
+    return test2;
+  }
+};
+var gameover = function(param) {
+  console.log("Dead!");
+  treeStateDate.passLarge = 0;
+  treeStateDate.passSmall = 0;
+  treeStateDate.x1 = random_int(500, 600);
+  treeStateDate.x2 = random_int(630, 800);
+  if (gameStateDate.scoreNow > gameStateDate.scoreMax) {
+    gameStateDate.scoreMax = gameStateDate.scoreNow;
+    updateTextMax(undefined);
+  }
+  gameStateDate.scoreNow = 0;
+  var ev = gameStateDate.gameEvent;
+  if (ev !== undefined) {
+    gameStateDate.gameEvent = undefined;
+    leafer.off_(valFromOption(ev));
+    return;
+  }
+};
+var gameloop = function(param) {
+  updateDragon(undefined);
+  updateRoad(undefined);
+  updateTree(undefined);
+  updateTextNow(undefined);
+  if (testDead(undefined)) {
+    return gameover(undefined);
   }
 };
 var jumpTask = function(param) {
@@ -10745,6 +10818,10 @@ var captureCommand = function(param) {
       };
       return;
   }
+};
+var gameStateDate = {
+  scoreNow: 0,
+  scoreMax: 0
 };
 var leaferJsConfig_width = 600;
 var leaferJsConfig_height = 400;
@@ -10830,25 +10907,27 @@ offsetObstructSmall.forEach(function(cor) {
 offsetObstructLarge.forEach(function(param) {
   return push(fillContainerTreeLarge, param);
 });
-var obsStateDate = {
+var treeStateDate = {
   x1: 100,
   y1: 182,
   x2: 400,
   y2: 168,
   isStart: false,
-  vx: 0
+  vx: 0,
+  passSmall: 0,
+  passLarge: 0
 };
 var treeRectSmall = new Rect({
-  x: obsStateDate.x1,
-  y: obsStateDate.y1,
+  x: treeStateDate.x1,
+  y: treeStateDate.y1,
   width: 18,
   height: 40,
   fill: fillContainerTreeSmall[0],
   draggable: false
 });
 var treeRectLarge = new Rect({
-  x: obsStateDate.x2,
-  y: obsStateDate.y2,
+  x: treeStateDate.x2,
+  y: treeStateDate.y2,
   width: 25,
   height: 54,
   fill: fillContainerTreeLarge[0],
@@ -10856,8 +10935,8 @@ var treeRectLarge = new Rect({
 });
 leafer.add(treeRectSmall);
 leafer.add(treeRectLarge);
-obsStateDate.vx = -3;
-obsStateDate.isStart = true;
+treeStateDate.vx = -3;
+treeStateDate.isStart = true;
 var roadStateDate = {
   isStart: false,
   x1: 0,
@@ -10893,10 +10972,49 @@ var road_02 = new Rect({
 leafer.add(road_01);
 leafer.add(road_02);
 roadStateDate.isStart = true;
-leafer.on_(AnimateEvent.FRAME, function(param) {
-  updateDragon(undefined);
-  updateRoad(undefined);
-  updateTree(undefined);
+var textScoreNow = new Text({
+  fill: "rgb(50,50,70)",
+  text: "",
+  x: 100,
+  y: 30
+});
+var textScoreMax = new Text({
+  fill: "rgb(50,50,70)",
+  text: "",
+  x: 100,
+  y: 45
+});
+leafer.add(textScoreNow);
+leafer.add(textScoreMax);
+textScoreNow.text = "Game Not Start! \u6309\u8FD9\u4E2A\u952E\u5F00\u59CB----->";
+updateTextMax(undefined);
+var fillButton_offset = {
+  x: 2,
+  y: 2
+};
+var fillButton = {
+  type: "image",
+  url: "./src/dragon.png",
+  mode: "clip",
+  offset: fillButton_offset
+};
+var button = new Rect({
+  x: 300,
+  y: 20,
+  width: 40,
+  height: 40,
+  fill: fillButton,
+  draggable: false
+});
+leafer.add(button);
+button.on(PointerEvent.DOWN, function(param) {
+  var ev = gameStateDate.gameEvent;
+  if (ev !== undefined) {
+    leafer.off_(valFromOption(ev));
+    gameStateDate.gameEvent = undefined;
+  } else {
+    gameStateDate.gameEvent = some(leafer.on_(AnimateEvent.FRAME, gameloop));
+  }
 });
 leafer.on_(PointerEvent.DOWN, function(param) {
   captureCommand(undefined);

@@ -37,11 +37,44 @@ rect: rectConfig => rectHandle = "Rect"
 event:eventHandle = "AnimateEvent";
 @val @module("leafer-ui") external 
 pointerEvent:pointerEvent = "PointerEvent"
+type textConfig={
+    fill: string,
+    text: string,
+    x: int,
+    y: int,
+} 
+type textHandle={
+    mutable text: string,
+}
+@new @module("leafer-ui") external 
+text: textConfig => textHandle = "Text"
+@send external 
+addText : (leaferHandle, textHandle ) => unit = "add"
+// const text = new Text({
+//   fill: 'rgb(50,205,121)',
+//   text: 'Welcome to LeaferJS',
+// })
 
-@send external on_:(leaferHandle, string, (unit)=>unit) => unit = "on_"
+type event 
+// type handle=| Lf(leaferHandle)| Rt(rectHandle)
+
+@send external on_:(leaferHandle, string, (unit)=>unit) => event = "on_"
+@send external off_:(leaferHandle, event ) => unit = "off_"
+
+@send external on:(rectHandle, string, (unit)=>unit) => event = "on"
+
 @send external 
 add : (leaferHandle, rectHandle ) => unit = "add"
 
+
+// game handle object 
+type gameState={ 
+    // mutable scoreLast: int,
+    mutable scoreNow: int,
+    mutable scoreMax: int,
+    mutable gameEvent? : event,  // None : 游戏停止， // Some ： 游戏在运行
+}
+let gameStateDate: gameState={ scoreNow: 0, scoreMax: 0 };
 // main object
 let leaferJsConfig:leaferConfig={view: window,
 width: 600,
@@ -195,19 +228,23 @@ type obsState= {
     y2: int,
     mutable isStart: bool,
     mutable vx: float,
+    mutable passSmall: int,
+    mutable passLarge: int,
 }
-let obsStateDate :obsState= {
+let treeStateDate :obsState= {
     x1: 100,
     y1: 182,
     x2: 400,
     y2: 168,
     isStart: false,
     vx: 0.0,
+    passSmall: 0,
+    passLarge: 0,
 } 
 
 let treeRectSmall = rect({
-    x: obsStateDate.x1,
-    y: obsStateDate.y1,
+    x: treeStateDate.x1,
+    y: treeStateDate.y1,
     width : 18,
     height: 40,
     fill: fillContainerTreeSmall[0],
@@ -215,8 +252,8 @@ let treeRectSmall = rect({
 })
 
 let treeRectLarge = rect({
-    x: obsStateDate.x2,
-    y: obsStateDate.y2,
+    x: treeStateDate.x2,
+    y: treeStateDate.y2,
     width : 25,
     height: 54,
     fill: fillContainerTreeLarge[0],
@@ -225,31 +262,34 @@ let treeRectLarge = rect({
 
 add(leafer, treeRectSmall);
 add(leafer, treeRectLarge);
-obsStateDate.vx = -3.0 ;
-obsStateDate.isStart = true; 
+treeStateDate.vx = -3.0 ;
+treeStateDate.isStart = true; 
 
 let updateTree = ()=>{
-    if(obsStateDate.isStart){
-        obsStateDate.x1 = obsStateDate.x1 + Js.Math.floor_int(obsStateDate.vx);
-        obsStateDate.x2 = obsStateDate.x2 + Js.Math.floor_int(obsStateDate.vx);
-        if (obsStateDate.x1 < -10){
+    if(treeStateDate.isStart){
+        treeStateDate.x1 = treeStateDate.x1 + Js.Math.floor_int(treeStateDate.vx);
+        treeStateDate.x2 = treeStateDate.x2 + Js.Math.floor_int(treeStateDate.vx);
+        if (treeStateDate.x1 < -10){
+            treeStateDate.passSmall = treeStateDate.passSmall +1;
             let width :int =switch leaferJsConfig.width{
             | Some(w)=>w| _=>600};
-            obsStateDate.x1 = width+Js.Math.random_int(0,500);
-            if(obsStateDate.x1 > obsStateDate.x2 -10 && obsStateDate.x1 < obsStateDate.x2+30){
-                obsStateDate.x1 = obsStateDate.x2 + 30 +Js.Math.random_int(0,500); 
+            treeStateDate.x1 = width+Js.Math.random_int(0,500);
+            if(treeStateDate.x1 > treeStateDate.x2 -10 && treeStateDate.x1 < treeStateDate.x2+30){
+                treeStateDate.x1 = treeStateDate.x2 + 30 +Js.Math.random_int(0,500); 
             }
         }
-        if (obsStateDate.x2 < -10){
+        if (treeStateDate.x2 < -10){
+            treeStateDate.passLarge = treeStateDate.passLarge +1;
             let width :int =switch leaferJsConfig.width{
             | Some(w)=>w| _=>600};
-            obsStateDate.x2 = width+Js.Math.random_int(0,500);
-            if(obsStateDate.x2 > obsStateDate.x1 -10 && obsStateDate.x2< obsStateDate.x1+30){
-                obsStateDate.x2 = obsStateDate.x1 + 30 +Js.Math.random_int(0,500); 
+            treeStateDate.x2 = width+Js.Math.random_int(0,500);
+            if(treeStateDate.x2 > treeStateDate.x1 -10 && treeStateDate.x2< treeStateDate.x1+30){
+                treeStateDate.x2 = treeStateDate.x1 + 30 +Js.Math.random_int(0,500); 
             }
         }
-        treeRectSmall.x = obsStateDate.x1;
-        treeRectLarge.x = obsStateDate.x2;
+        gameStateDate.scoreNow =  treeStateDate.passLarge * 20 + treeStateDate.passSmall * 10;
+        treeRectSmall.x = treeStateDate.x1;
+        treeRectLarge.x = treeStateDate.x2;
     }
 }
 // For the road, withing the road01,road02
@@ -315,16 +355,106 @@ let updateRoad = ()=>{
         road_02.x = roadStateDate.x2;
     }
 }
-// test
+// text
+let textScoreNow = text({
+    fill: "rgb(50,50,70)",
+    x: 100,
+    y: 30,
+    text: ""
+}); 
+let textScoreMax = text({
+    fill: "rgb(50,50,70)",
+    x: 100,
+    y: 45,
+    text: ""
+});
+
+let updateTextNow=()=>{
+    textScoreNow.text = "当前得分：" ++ Js.Int.toString(gameStateDate.scoreNow);
+}
+let updateTextMax=()=>{
+    textScoreMax.text = "最高得分：" ++ Js.Int.toString(gameStateDate.scoreMax);
+}
+// let updateTextLast=()=>{
+//     textScoreLast.text = "上局得分：" ++ Js.Int.toString(gameStateDate.scoreLast);
+// }
+
+addText(leafer,textScoreNow);
+// addText(leafer,textScoreLast);
+addText(leafer,textScoreMax);
+textScoreNow.text = "Game Not Start! 按这个键开始----->";
+// updateTextLast();
+updateTextMax();
 
 //routine of the game 
+let fillButton : fillConfig ={
+    ...fillDefault,
+    offset: {x: 2,y : 2},
+}
+let button = rect({
+    x: 300,
+    y: 20 ,
+    width: 40,
+    height: 40,  
+    fill: Some(fillButton),
+    draggable: false,
+})
+add(leafer, button);
 
-on_(leafer, event.frame_ , () => { 
+
+// let gameEvent = on_(Lf(leafer), event.frame_ , () => { 
+//     updateDragon();
+//     updateRoad();
+//     updateTree();
+//     // Js.log("test")
+//     // rect.forceUpdate();
+// })
+
+
+let testDead = () =>{
+    let test1 = (Js.Math.abs_int(dragonState.x0 -treeStateDate.x1) < 18) &&  (Js.Math.abs_int(dragonState.y-treeStateDate.y1) < 30)
+    let test2 = (Js.Math.abs_int(dragonState.x0 -treeStateDate.x2) < 20) &&  (Js.Math.abs_int(dragonState.y-treeStateDate.y2) < 40)
+    test1 || test2 
+}
+let gameover= ()=>{
+    Js.log("Dead!")
+    treeStateDate.passLarge = 0 ;
+    treeStateDate.passSmall = 0 ;
+    treeStateDate.x1 = Js.Math.random_int(500,600);
+    treeStateDate.x2 = Js.Math.random_int(630,800);
+    if(gameStateDate.scoreNow > gameStateDate.scoreMax){
+        gameStateDate.scoreMax = gameStateDate.scoreNow;
+        updateTextMax();
+    }
+    // gameStateDate.scoreLast = gameStateDate.scoreNow;
+    gameStateDate.scoreNow = 0;
+    switch(gameStateDate.gameEvent){
+        | Some(ev) =>{
+            gameStateDate.gameEvent = None;
+            let _ = off_( leafer , ev);
+            }
+        | _=>()
+    }
+} 
+let gameloop= ()=>{
     updateDragon();
     updateRoad();
     updateTree();
-    // Js.log("test")
-    // rect.forceUpdate();
+    updateTextNow();
+    if (testDead()){ 
+        gameover();
+    } 
+}
+let _ = on(button, pointerEvent.down_, ()=>{
+    switch (gameStateDate.gameEvent){
+        | Some(ev)=>{
+            let _ = off_( leafer , ev);
+            gameStateDate.gameEvent = None; 
+        }
+        | None => {
+            gameStateDate.gameEvent =  Some(on_( leafer , event.frame_ , gameloop)) 
+        }
+    } 
 })
 
 let jumpTask =()=>{
@@ -343,7 +473,7 @@ let captureCommand = ()=>{
     } 
 }
 
-on_(leafer, pointerEvent.down_, ()  =>{
+let _ = on_( leafer , pointerEvent.down_, ()  =>{
    captureCommand();
 })
 

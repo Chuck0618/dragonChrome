@@ -2,10 +2,16 @@
 
 import * as Js_math from "rescript/lib/es6/js_math.js";
 import * as LeaferUi from "leafer-ui";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 
 function appname(param) {
   return "my name is dragon";
 }
+
+var gameStateDate = {
+  scoreNow: 0,
+  scoreMax: 0
+};
 
 var leaferJsConfig_width = 600;
 
@@ -181,18 +187,20 @@ offsetObstructLarge.forEach(function (param) {
       return push(fillContainerTreeLarge, param);
     });
 
-var obsStateDate = {
+var treeStateDate = {
   x1: 100,
   y1: 182,
   x2: 400,
   y2: 168,
   isStart: false,
-  vx: 0.0
+  vx: 0.0,
+  passSmall: 0,
+  passLarge: 0
 };
 
 var treeRectSmall = new LeaferUi.Rect({
-      x: obsStateDate.x1,
-      y: obsStateDate.y1,
+      x: treeStateDate.x1,
+      y: treeStateDate.y1,
       width: 18,
       height: 40,
       fill: fillContainerTreeSmall[0],
@@ -200,8 +208,8 @@ var treeRectSmall = new LeaferUi.Rect({
     });
 
 var treeRectLarge = new LeaferUi.Rect({
-      x: obsStateDate.x2,
-      y: obsStateDate.y2,
+      x: treeStateDate.x2,
+      y: treeStateDate.y2,
       width: 25,
       height: 54,
       fill: fillContainerTreeLarge[0],
@@ -212,36 +220,39 @@ leafer.add(treeRectSmall);
 
 leafer.add(treeRectLarge);
 
-obsStateDate.vx = -3.0;
+treeStateDate.vx = -3.0;
 
-obsStateDate.isStart = true;
+treeStateDate.isStart = true;
 
 function updateTree(param) {
-  if (!obsStateDate.isStart) {
+  if (!treeStateDate.isStart) {
     return ;
   }
-  obsStateDate.x1 = obsStateDate.x1 + Js_math.floor_int(obsStateDate.vx) | 0;
-  obsStateDate.x2 = obsStateDate.x2 + Js_math.floor_int(obsStateDate.vx) | 0;
-  if (obsStateDate.x1 < -10) {
+  treeStateDate.x1 = treeStateDate.x1 + Js_math.floor_int(treeStateDate.vx) | 0;
+  treeStateDate.x2 = treeStateDate.x2 + Js_math.floor_int(treeStateDate.vx) | 0;
+  if (treeStateDate.x1 < -10) {
+    treeStateDate.passSmall = treeStateDate.passSmall + 1 | 0;
     var w = 600;
     var width = w !== undefined ? w : 600;
-    obsStateDate.x1 = width + Js_math.random_int(0, 500) | 0;
-    if (obsStateDate.x1 > (obsStateDate.x2 - 10 | 0) && obsStateDate.x1 < (obsStateDate.x2 + 30 | 0)) {
-      obsStateDate.x1 = (obsStateDate.x2 + 30 | 0) + Js_math.random_int(0, 500) | 0;
+    treeStateDate.x1 = width + Js_math.random_int(0, 500) | 0;
+    if (treeStateDate.x1 > (treeStateDate.x2 - 10 | 0) && treeStateDate.x1 < (treeStateDate.x2 + 30 | 0)) {
+      treeStateDate.x1 = (treeStateDate.x2 + 30 | 0) + Js_math.random_int(0, 500) | 0;
     }
     
   }
-  if (obsStateDate.x2 < -10) {
+  if (treeStateDate.x2 < -10) {
+    treeStateDate.passLarge = treeStateDate.passLarge + 1 | 0;
     var w$1 = 600;
     var width$1 = w$1 !== undefined ? w$1 : 600;
-    obsStateDate.x2 = width$1 + Js_math.random_int(0, 500) | 0;
-    if (obsStateDate.x2 > (obsStateDate.x1 - 10 | 0) && obsStateDate.x2 < (obsStateDate.x1 + 30 | 0)) {
-      obsStateDate.x2 = (obsStateDate.x1 + 30 | 0) + Js_math.random_int(0, 500) | 0;
+    treeStateDate.x2 = width$1 + Js_math.random_int(0, 500) | 0;
+    if (treeStateDate.x2 > (treeStateDate.x1 - 10 | 0) && treeStateDate.x2 < (treeStateDate.x1 + 30 | 0)) {
+      treeStateDate.x2 = (treeStateDate.x1 + 30 | 0) + Js_math.random_int(0, 500) | 0;
     }
     
   }
-  treeRectSmall.x = obsStateDate.x1;
-  treeRectLarge.x = obsStateDate.x2;
+  gameStateDate.scoreNow = Math.imul(treeStateDate.passLarge, 20) + Math.imul(treeStateDate.passSmall, 10) | 0;
+  treeRectSmall.x = treeStateDate.x1;
+  treeRectLarge.x = treeStateDate.x2;
 }
 
 var roadStateDate = {
@@ -304,10 +315,108 @@ function updateRoad(param) {
   
 }
 
-leafer.on_(LeaferUi.AnimateEvent.FRAME, (function (param) {
-        updateDragon(undefined);
-        updateRoad(undefined);
-        updateTree(undefined);
+var textScoreNow = new LeaferUi.Text({
+      fill: "rgb(50,50,70)",
+      text: "",
+      x: 100,
+      y: 30
+    });
+
+var textScoreMax = new LeaferUi.Text({
+      fill: "rgb(50,50,70)",
+      text: "",
+      x: 100,
+      y: 45
+    });
+
+function updateTextNow(param) {
+  textScoreNow.text = "当前得分：" + gameStateDate.scoreNow.toString();
+}
+
+function updateTextMax(param) {
+  textScoreMax.text = "最高得分：" + gameStateDate.scoreMax.toString();
+}
+
+leafer.add(textScoreNow);
+
+leafer.add(textScoreMax);
+
+textScoreNow.text = "Game Not Start! 按这个键开始----->";
+
+updateTextMax(undefined);
+
+var fillButton_offset = {
+  x: 2,
+  y: 2
+};
+
+var fillButton = {
+  type: "image",
+  url: "./src/dragon.png",
+  mode: "clip",
+  offset: fillButton_offset
+};
+
+var button = new LeaferUi.Rect({
+      x: 300,
+      y: 20,
+      width: 40,
+      height: 40,
+      fill: fillButton,
+      draggable: false
+    });
+
+leafer.add(button);
+
+function testDead(param) {
+  var test1 = Math.abs(dragonState.x0 - treeStateDate.x1 | 0) < 18 && Math.abs(dragonState.y - treeStateDate.y1 | 0) < 30;
+  var test2 = Math.abs(dragonState.x0 - treeStateDate.x2 | 0) < 20 && Math.abs(dragonState.y - treeStateDate.y2 | 0) < 40;
+  if (test1) {
+    return true;
+  } else {
+    return test2;
+  }
+}
+
+function gameover(param) {
+  console.log("Dead!");
+  treeStateDate.passLarge = 0;
+  treeStateDate.passSmall = 0;
+  treeStateDate.x1 = Js_math.random_int(500, 600);
+  treeStateDate.x2 = Js_math.random_int(630, 800);
+  if (gameStateDate.scoreNow > gameStateDate.scoreMax) {
+    gameStateDate.scoreMax = gameStateDate.scoreNow;
+    updateTextMax(undefined);
+  }
+  gameStateDate.scoreNow = 0;
+  var ev = gameStateDate.gameEvent;
+  if (ev !== undefined) {
+    gameStateDate.gameEvent = undefined;
+    leafer.off_(Caml_option.valFromOption(ev));
+    return ;
+  }
+  
+}
+
+function gameloop(param) {
+  updateDragon(undefined);
+  updateRoad(undefined);
+  updateTree(undefined);
+  updateTextNow(undefined);
+  if (testDead(undefined)) {
+    return gameover(undefined);
+  }
+  
+}
+
+button.on(LeaferUi.PointerEvent.DOWN, (function (param) {
+        var ev = gameStateDate.gameEvent;
+        if (ev !== undefined) {
+          leafer.off_(Caml_option.valFromOption(ev));
+          gameStateDate.gameEvent = undefined;
+        } else {
+          gameStateDate.gameEvent = Caml_option.some(leafer.on_(LeaferUi.AnimateEvent.FRAME, gameloop));
+        }
       }));
 
 function jumpTask(param) {
@@ -346,6 +455,7 @@ var roadRangeMax = 1200;
 
 export {
   appname ,
+  gameStateDate ,
   leaferJsConfig ,
   leafer ,
   x_offset ,
@@ -362,7 +472,7 @@ export {
   fillContainerTreeSmall ,
   fillContainerTreeLarge ,
   push ,
-  obsStateDate ,
+  treeStateDate ,
   treeRectSmall ,
   treeRectLarge ,
   updateTree ,
@@ -372,6 +482,15 @@ export {
   road_01 ,
   road_02 ,
   updateRoad ,
+  textScoreNow ,
+  textScoreMax ,
+  updateTextNow ,
+  updateTextMax ,
+  fillButton ,
+  button ,
+  testDead ,
+  gameover ,
+  gameloop ,
   jumpTask ,
   captureCommand ,
 }
