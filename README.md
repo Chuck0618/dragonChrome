@@ -1,5 +1,8 @@
 # 用 ReScript 复现chrome小恐龙代码
  
+## 试玩地址
+ http://huchq.cn:6080/dragon/index.html
+ 
 ## 主要工具
 +. 这里利用了 leafer-ui
 1. leafer 
