@@ -1,9 +1,12 @@
-# 这里我们放一些 ReScript 代码
+# 用 ReScript 复现chrome小恐龙代码
  
-The only official ReScript starter template. Clone this repo to get started.
-
-This is the branch where you can use your output code in NodeJS. To use your output in the browser, do `git checkout -b browser origin/browser` to switch to the `browser` branch.
-
+## 主要工具
++. 这里利用了 leafer-ui
+1. leafer 
+2. rect
+3. text 
++. 构筑工具用了 bun 
+ 
 ## bun build
 
 ```bash
@@ -18,12 +21,8 @@ npm install
 
 ## Build
 
-- Build: `npm run res:build`
-- Clean: `npm run res:clean`
-- Build & watch: `npm run res:dev`
-
-## Run
-
-```sh
-node src/Demo.bs.js
-```
+- Build: `bun run res:build`
+- Clean: `bun run res:clean`
+- Build & watch: `bun run res:dev`
+- Release:  `bun run res`
+ 

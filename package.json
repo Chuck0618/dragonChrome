@@ -7,7 +7,8 @@
   "license": "MIT",
   "author": "",
   "scripts": {
-    "res:build": "rescript",
+    "res:build": "rescript build",
+    "res:dev": "rescript build -w",
     "res:clean": "rescript clean",
     "res": "rescript build && bun build src/index.js --outdir=out --target browser"
   },

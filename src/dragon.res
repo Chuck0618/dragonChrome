@@ -232,7 +232,7 @@ type obsState= {
     mutable passLarge: int,
 }
 let treeStateDate :obsState= {
-    x1: 100,
+    x1: 300,
     y1: 182,
     x2: 400,
     y2: 168,
